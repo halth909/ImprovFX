@@ -1,0 +1,22 @@
+{
+  "name": "malcolm-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/halth909/Malcolm-App.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/halth909/Malcolm-App/issues"
+  },
+  "homepage": "https://github.com/halth909/Malcolm-App#readme",
+  "devDependencies": {
+    "electron": "^20.0.1"
+  }
+}
