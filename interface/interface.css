@@ -1,0 +1,9 @@
+body {
+    display: flex;
+    flex-direction: row;
+}
+
+#panel-left {
+    display: flex;
+    flex-direction: column;
+}
