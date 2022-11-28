@@ -1,20 +1,55 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron');
+const { fstat } = require('original-fs');
+const fs = require('fs');
+const path = require('path');
 
-const createWindow = () => {
-    const win = new BrowserWindow({
-        width: 800,
-        height: 600,
-    })
+const windowDefaults = {
+    width: 800,
+    height: 600,
+    webPreferences: {
+        preload: path.join(__dirname, 'preload.js'),
+    },
+};
 
-    win.loadFile('interface/index.html')
-}
+let controlsWindow;
+let showWindow;
+
+const media = (_ => {
+    let _public = {};
+
+    _public.list = (dir) => {
+        const path = path.join(__dirname, `_media/${dir}`);
+        fs.readdir(path, (err, files) => {
+            if (err) {
+                console.error(err);
+            }
+
+            controlsWindow.webContents.send('asynchronous-message', {
+                path: files
+            });
+        });
+    }
+
+    return _public;
+})();
+
+ipcMain.handle('sendMessage', (data) => {
+    console.log(data);
+});
 
 app.whenReady().then(() => {
-    createWindow()
+    controlsWindow = new BrowserWindow(windowDefaults);
+    controlsWindow.loadFile('windows/controls.html');
+
+    showWindow = new BrowserWindow(windowDefaults);
+    showWindow.loadFile('windows/show.html');
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
-    })
+    });
+
+    media.list('images');
+    media.list('sound');
 });
 
 app.on('window-all-closed', () => {

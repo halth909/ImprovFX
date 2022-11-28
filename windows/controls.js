@@ -1,3 +1,9 @@
+const ipc = require('electron').ipcRenderer;
+
+ipc.on('asynchronous-message', function(evt, message) {
+    console.log(message);
+});
+
 async function init() {
     $(document).on('click', '.sfx-button', function() {
         console.log(this);
