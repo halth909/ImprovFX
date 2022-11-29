@@ -24,7 +24,7 @@ const media = (_ => {
                 console.error(err);
             }
 
-            controlsWindow.webContents.send('asynchronous-message', {
+            controlsWindow.webContents.send(`${dir}-list`, {
                 path: files
             });
         });
@@ -33,11 +33,41 @@ const media = (_ => {
     return _public;
 })();
 
-ipcMain.handle('sendMessage', (data) => {
-    console.log(data);
-});
+app.whenReady().then(_ => {
+    ipcMain.on('imageClicked', (event, imagePath) => {
+        showWindow.webContents.send('showImage', imagePath);
+    });
 
-app.whenReady().then(() => {
+    ipcMain.on('playVideo', (event, videoName) => {
+        showWindow.webContents.send('playVideo', videoName);
+    });
+
+    ipcMain.on('getFiles', _ => {
+        let result = {
+            images: getFilesData('_media/images'),
+            sfx: getFilesData('_media/sfx')
+        }
+
+        console.log(result);
+
+        controlsWindow.webContents.send(`listFiles`, result);
+
+        function getFilesData(localPath) {
+            let filesData = [];
+
+            const files = fs.readdirSync(localPath);
+
+            for (let i = 0; i < files.length; i++) {
+                filesData.push({
+                    name: path.parse(files[i]).name,
+                    url: path.join(__dirname, localPath, files[i])
+                });
+            }
+
+            return filesData;
+        }
+    });
+
     controlsWindow = new BrowserWindow(windowDefaults);
     controlsWindow.loadFile('windows/controls.html');
 

@@ -1,35 +1,75 @@
-const ipc = require('electron').ipcRenderer;
-
-ipc.on('asynchronous-message', function(evt, message) {
-    console.log(message);
-});
-
 async function init() {
-    $(document).on('click', '.sfx-button', function() {
-        console.log(this);
-        new Howl({ src: [$(this).attr('url')] }).play()
+
+    // local interaction
+    $(document).on('click', '.image-button', event => {
+        api.sendMessage('imageClicked', $(event.currentTarget).attr('data-url'));
     });
 
-    let $sfxDirectory = $('#sfx-directory');
-    let $sfxButtonContainer = $('#sfx-button-container');
+    $(document).on('click', '.sfx-button', event => {
+        new Howl({
+            src: [$(event.currentTarget).attr('data-url')]
+        }).play();
+    });
 
-    $sfxDirectory.on('change', function(e) {
-        $sfxButtonContainer.empty();
+    $(document).on('keydown', event => {
+        const num = parseInt(event.key);
 
-        const files = this.files;
+        if (isNaN(num)) {
+            return;
+        }
 
-        for (let i = 0; i < files.length; i++) {
-            let file = files.item(i);
-            console.log(file.name);
-            $sfxButtonContainer.append($.parseHTML(`
-                <button class="sfx-button" url='${file.path}'>${file.name}</button>
+        if (num > $('.sfx-button').length) {
+            return;
+        }
+
+        new Howl({
+            src: [$('.sfx-button').eq(num - 1).attr('data-url')]
+        }).play();
+    });
+
+    $(document).on('click', '#play-intro', _ => {
+        api.sendMessage('playVideo', 'intro');
+    });
+
+    $(document).on('click', '#play-outro', _ => {
+        api.sendMessage('playVideo', 'outro');
+    });
+
+    // api events
+    api.onListFiles((files) => {
+        console.log(files);
+
+        for (let i = 0; i < files.images.length; i++) {
+            const image = files.images[i];
+            console.log(image);
+
+            $('#image-buttons').append($.parseHTML(`
+                <div class="image-button" data-url="${image.url}">
+                    <img class="image-preview" src="${image.url}">
+                    <p>${image.name}</p>
+                </div>
+            `));
+        }
+
+        for (let i = 0; i < files.sfx.length; i++) {
+            const sfx = files.sfx[i];
+            console.log(sfx);
+
+            const keymarker = i < 9 ? `(${i + 1}) ` : '';
+
+            $('#sfx-buttons').append($.parseHTML(`
+                <button class="sfx-button" data-url="${sfx.url}">
+                    <img class="play-icon" src="./assets/play.png">
+                    <p>${keymarker}${sfx.name}</p>
+                </button>
             `));
         }
     });
 
-    console.log($sfxDirectory);
+    // request media files
+    api.sendMessage('getFiles');
 }
 
-$(document).ready(() => {
+window.onload = _ => {
     init();
-});
+}

@@ -16,23 +16,32 @@
 </head>
 
 <body>
-    <div id="toolbar">
-
+    <div id="header">
+        <button id="button-controls">Controls</button>
+        <button id="button-details">Show Details</button>
     </div>
 
-    <div id="panel-left">
-        <div>
-            <label>Projector text:</label>
-            <input id="projector-text" type="text" />
+    <div id="panel-controls">
+        <div id="video-buttons">
+            <button id="play-intro" class="video-button">
+                <img class="play-icon" src="./assets/play.png">
+                <p>Play Intro</p>
+            </button>
+            <button id="play-outro" class="video-button">
+                <img class="play-icon" src="./assets/play.png">
+                <p>Play Outro</p>
+            </button>
         </div>
-        <div>
-            <label>Sound effects:</label>
-            <input id="sfx-directory" type="file" multiple />
+
+        <div id="media-buttons">
+            <div id="image-buttons">
+                <h2>Backgrounds</h2>
+            </div>
+
+            <div id="sfx-buttons">
+                <h2>SFX</h2>
+            </div>
         </div>
-    </div>
-
-    <div id="sfx-button-container">
-
     </div>
 </body>
 

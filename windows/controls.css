@@ -1,9 +1,96 @@
+:root {
+    --color-blue: rgb(186, 223, 255);
+}
+
+* {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
 body {
+    display: flex;
+    flex-direction: column;
+}
+
+button {
+    background-color: transparent;
+    border: 1px solid black;
+    padding: 2px 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: gray;
+}
+
+#header {
+    width: 100%;
+    padding: 5px 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: var(--color-blue);
+}
+
+#panel-controls {
+    display: flex;
+    flex-direction: column;
+}
+
+#video-buttons {
+    padding: 5px 10px;
+    gap: 5px;
     display: flex;
     flex-direction: row;
 }
 
-#panel-left {
+.video-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+}
+
+img.play-icon {
+    height: 20px;
+}
+
+#media-buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    padding: 10px;
+}
+
+#image-buttons,
+#sfx-buttons {
+    padding: 5px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.image-button,
+.sfx-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.image-preview {
+    width: 160px;
+    height: 100px;
+    background-color: black;
+    object-fit: contain;
+}
+
+#sfx-buttons {
     display: flex;
     flex-direction: column;
 }
