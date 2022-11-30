@@ -1,5 +1,6 @@
 :root {
     --color-blue: rgb(186, 223, 255);
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 * {
@@ -14,11 +15,17 @@ body {
     flex-direction: column;
 }
 
+button,
+input,
+textarea {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 2px 5px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 button {
     background-color: transparent;
-    border: 1px solid black;
-    padding: 2px 5px;
-    border-radius: 5px;
     cursor: pointer;
 }
 
@@ -31,7 +38,7 @@ button:hover {
     padding: 5px 10px;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    gap: 10px;
     background-color: var(--color-blue);
 }
 
@@ -93,4 +100,11 @@ img.play-icon {
 #sfx-buttons {
     display: flex;
     flex-direction: column;
+}
+
+#panel-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 20px 30px;
 }

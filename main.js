@@ -39,7 +39,8 @@ app.whenReady().then(_ => {
     });
 
     ipcMain.on('playVideo', (event, videoName) => {
-        showWindow.webContents.send('playVideo', videoName);
+        const videoPath = path.join(__dirname, videoName);
+        showWindow.webContents.send('playVideo', videoPath);
     });
 
     ipcMain.on('getFiles', _ => {

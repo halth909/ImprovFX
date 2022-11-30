@@ -1,4 +1,15 @@
 async function init() {
+    $('#panel-details').hide();
+
+    $(document).on('click', '#button-controls', _ => {
+        $('#panel-controls').show();
+        $('#panel-details').hide();
+    });
+
+    $(document).on('click', '#button-details', _ => {
+        $('#panel-controls').hide();
+        $('#panel-details').show();
+    });
 
     // local interaction
     $(document).on('click', '.image-button', event => {
@@ -28,11 +39,11 @@ async function init() {
     });
 
     $(document).on('click', '#play-intro', _ => {
-        api.sendMessage('playVideo', 'intro');
+        api.sendMessage('playVideo', '_media/intro.mp4');
     });
 
     $(document).on('click', '#play-outro', _ => {
-        api.sendMessage('playVideo', 'outro');
+        api.sendMessage('playVideo', '_media/outro.mp4');
     });
 
     // api events
