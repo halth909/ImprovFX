@@ -1,0 +1,2 @@
+(()=>{var e={298:e=>{"use strict";e.exports=require("electron")}},o={};function r(n){var s=o[n];if(void 0!==s)return s.exports;var t=o[n]={exports:{}};return e[n](t,t.exports,r),t.exports}(()=>{const{contextBridge:e,ipcRenderer:o}=r(298);e.exposeInMainWorld("api",{sendMessage:o.send,onListFiles:e=>{o.on("listFiles",((o,...r)=>e(...r)))},onShowImage:e=>{o.on("showImage",((o,...r)=>e(...r)))},onPlayVideo:e=>{o.on("playVideo",((o,...r)=>e(...r)))}})})()})();
+//# sourceMappingURL=preload.js.map
