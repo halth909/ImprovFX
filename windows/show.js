@@ -32,29 +32,29 @@ function tryProcessAction() {
     actionBuffer = null;
 }
 
-function fadeOut() {
+function fadeOut(query) {
     return new Promise(async resolve => {
         busy = true;
 
-        $('.media-item').addClass('hidden');
+        $(query).addClass('hidden');
 
-        if ($('.media-item').length > 0) {
+        if ($(query).length > 0) {
             await milliseconds(transitionDuration / 2);
         }
 
-        $('.media-item').remove();
+        $(query).remove();
 
         resolve();
     });
 }
 
-function fadeIn() {
+function fadeIn(query) {
     return new Promise(async resolve => {
         await animationFrame();
         await animationFrame();
 
-        $('.media-item').addClass('animated');
-        $('.media-item').removeClass('hidden');
+        $(query).addClass('animated');
+        $(query).removeClass('hidden');
 
         await milliseconds(transitionDuration / 2);
 
@@ -67,13 +67,13 @@ function fadeIn() {
 async function transitionToImage({ imagePath }) {
     console.log(imagePath);
 
-    await fadeOut();
+    await fadeOut('.media-item');
 
     $('body').append($.parseHTML(`
         <img class="media-item hidden" src="${imagePath}">
     `));
 
-    await fadeIn();
+    await fadeIn('.media-item');
 
     tryProcessAction();
 }
@@ -81,13 +81,13 @@ async function transitionToImage({ imagePath }) {
 async function transitionToVideo({ videoPath }) {
     console.log(videoPath);
 
-    await fadeOut();
+    await fadeOut('.media-item');
 
     $('body').append($.parseHTML(`
         <video class="media-item hidden" src="${videoPath}" autoplay>
     `));
 
-    await fadeIn();
+    await fadeIn('.media-item');
 
     tryProcessAction();
 }
@@ -112,6 +112,16 @@ async function init() {
 
         tryProcessAction();
     });
+
+    api.onUpdateDetails((details) => {
+        details = JSON.parse(details);
+
+        for (const [key, value] of Object.entries(details)) {
+            $(`#${key}`).html(value);
+        }
+    });
+
+    api.sendMessage('getConfig');
 }
 
 window.onload = _ => {

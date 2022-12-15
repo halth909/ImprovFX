@@ -7,10 +7,21 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    color: white;
+    font-family: 'Exo', sans-serif;
 }
 
 body {
     background-color: black;
+}
+
+#details {
+    position: fixed;
+    bottom: 10vh;
+    left: 16vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
 }
 
 .media-item {
@@ -21,6 +32,7 @@ body {
     height: 100%;
     object-fit: contain;
     opacity: 1;
+    z-index: 0;
 }
 
 .animated {
@@ -29,4 +41,9 @@ body {
 
 .hidden {
     opacity: 0;
+}
+
+@font-face {
+    font-family: Exo;
+    src: url(assets/Exo/static/Exo-Medium.ttf);
 }

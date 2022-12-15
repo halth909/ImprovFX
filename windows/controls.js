@@ -1,3 +1,19 @@
+const details = (_ => {
+    let _public = {};
+
+    _public.update = _ => {
+        let result = {};
+
+        $('input, textarea').each((index, element) => {
+            result[$(element).attr('id')] = $(element).val();
+        });
+
+        api.sendMessage('detailsUpdated', JSON.stringify(result));
+    }
+
+    return _public;
+})();
+
 async function init() {
     $('#panel-details').hide();
 
@@ -46,6 +62,10 @@ async function init() {
         api.sendMessage('playVideo', '_media/outro.mp4');
     });
 
+    $(document).on('keyup', 'input, textarea', _ => {
+        details.update();
+    });
+
     // api events
     api.onListFiles((files) => {
         console.log(files);
@@ -74,6 +94,14 @@ async function init() {
                     <p>${keymarker}${sfx.name}</p>
                 </button>
             `));
+        }
+    });
+
+    api.onUpdateDetails((details) => {
+        details = JSON.parse(details);
+
+        for (const [key, value] of Object.entries(details)) {
+            $(`#${key}`).val(value);
         }
     });
 

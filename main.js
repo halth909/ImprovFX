@@ -18,8 +18,8 @@ const media = (_ => {
     let _public = {};
 
     _public.list = (dir) => {
-        const path = path.join(__dirname, `_media/${dir}`);
-        fs.readdir(path, (err, files) => {
+        const mediaPath = path.join(__dirname, `_media/${dir}`);
+        fs.readdir(mediaPath, (err, files) => {
             if (err) {
                 console.error(err);
             }
@@ -34,6 +34,11 @@ const media = (_ => {
 })();
 
 app.whenReady().then(_ => {
+    ipcMain.on('detailsUpdated', (event, details) => {
+        showWindow.webContents.send('updateDetails', details);
+        fs.writeFileSync(path.join(__dirname, 'details.txt'), details);
+    });
+
     ipcMain.on('imageClicked', (event, imagePath) => {
         showWindow.webContents.send('showImage', imagePath);
     });
@@ -49,9 +54,22 @@ app.whenReady().then(_ => {
             sfx: getFilesData('_media/sfx')
         }
 
-        console.log(result);
-
         controlsWindow.webContents.send(`listFiles`, result);
+
+        let details;
+
+        try {
+            details = fs.readFileSync(path.join(__dirname, 'details.txt'), {
+                encoding: 'utf8'
+            });
+        } catch (err) {
+            console.log(err);
+        }
+
+        console.log(details);
+
+        controlsWindow.webContents.send('updateDetails', details);
+        showWindow.webContents.send('updateDetails', details);
 
         function getFilesData(localPath) {
             let filesData = [];
@@ -80,7 +98,7 @@ app.whenReady().then(_ => {
     });
 
     media.list('images');
-    media.list('sound');
+    media.list('sfx');
 });
 
 app.on('window-all-closed', () => {

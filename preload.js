@@ -9,6 +9,10 @@ contextBridge.exposeInMainWorld('api', {
     },
 
     // show api 
+    onUpdateDetails: (callback) => {
+        ipcRenderer.on("updateDetails", (event, ...args) => callback(...args));
+    },
+
     onShowImage: (callback) => {
         ipcRenderer.on("showImage", (event, ...args) => callback(...args));
     },
