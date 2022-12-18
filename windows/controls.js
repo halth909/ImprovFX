@@ -68,11 +68,8 @@ async function init() {
 
     // api events
     api.onListFiles((files) => {
-        console.log(files);
-
         for (let i = 0; i < files.images.length; i++) {
             const image = files.images[i];
-            console.log(image);
 
             $('#image-buttons').append($.parseHTML(`
                 <div class="image-button" data-url="${image.url}">
@@ -84,8 +81,6 @@ async function init() {
 
         for (let i = 0; i < files.sfx.length; i++) {
             const sfx = files.sfx[i];
-            console.log(sfx);
-
             const keymarker = i < 9 ? `(${i + 1}) ` : '';
 
             $('#sfx-buttons').append($.parseHTML(`

@@ -15,6 +15,15 @@ body {
     flex-direction: column;
 }
 
+h2 {
+    margin-bottom: 10px;
+}
+
+input,
+textarea {
+    margin-bottom: 10px;
+}
+
 button,
 input,
 textarea {

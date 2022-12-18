@@ -66,8 +66,6 @@ app.whenReady().then(_ => {
             console.log(err);
         }
 
-        console.log(details);
-
         controlsWindow.webContents.send('updateDetails', details);
         showWindow.webContents.send('updateDetails', details);
 

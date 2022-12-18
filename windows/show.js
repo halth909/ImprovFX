@@ -65,8 +65,6 @@ function fadeIn(query) {
 }
 
 async function transitionToImage({ imagePath }) {
-    console.log(imagePath);
-
     await fadeOut('.media-item');
 
     $('body').append($.parseHTML(`
@@ -79,8 +77,6 @@ async function transitionToImage({ imagePath }) {
 }
 
 async function transitionToVideo({ videoPath }) {
-    console.log(videoPath);
-
     await fadeOut('.media-item');
 
     $('body').append($.parseHTML(`
@@ -103,8 +99,6 @@ async function init() {
     });
 
     api.onPlayVideo((videoPath) => {
-        console.log(videoPath);
-
         actionBuffer = {
             action: transitionToVideo,
             options: { videoPath }
