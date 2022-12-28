@@ -16,26 +16,47 @@ const animationFrame = _ => {
 
 const transitionDuration = 5000; // milliseconds
 
-let busy = false;
-let actionBuffer = null;
+let actionHandlerFactory = {
+    fabricate: _ => {
+        let busy = false;
+        let actionBuffer = null;
 
-function tryProcessAction() {
-    if (busy) {
-        return;
+        async function tryProcessAction() {
+            if (busy) {
+                return;
+            }
+
+            if (actionBuffer === null) {
+                return;
+            }
+
+            busy = true;
+
+            let preparedAction = actionBuffer.action(actionBuffer.options);
+            actionBuffer = null;
+
+            await preparedAction;
+
+            busy = false;
+
+            tryProcessAction();
+        }
+
+        let _public = {};
+
+        _public.addAction = (actionData) => {
+            console.log(actionData);
+
+            actionBuffer = actionData;
+            tryProcessAction()
+        };
+
+        return _public;
     }
-
-    if (actionBuffer === null) {
-        return;
-    }
-
-    actionBuffer.action(actionBuffer.options);
-    actionBuffer = null;
 }
 
-function fadeOut(query) {
+function fadeOut({ query }) {
     return new Promise(async resolve => {
-        busy = true;
-
         $(query).addClass('hidden');
 
         if ($(query).length > 0) {
@@ -48,7 +69,7 @@ function fadeOut(query) {
     });
 }
 
-function fadeIn(query) {
+function fadeIn({ query }) {
     return new Promise(async resolve => {
         await animationFrame();
         await animationFrame();
@@ -58,60 +79,84 @@ function fadeIn(query) {
 
         await milliseconds(transitionDuration / 2);
 
-        busy = false;
+        resolve();
+    });
+}
+
+function transitionToImage({ imagePath }) {
+    return new Promise(async resolve => {
+        await fadeOut({ query: '.media-item' });
+
+        $('body').append($.parseHTML(`
+            <img class="media-item hidden" src="${imagePath}">
+        `));
+
+        await fadeIn({ query: '.media-item' });
 
         resolve();
     });
 }
 
-async function transitionToImage({ imagePath }) {
-    await fadeOut('.media-item');
+function transitionToVideo({ videoPath }) {
+    return new Promise(async resolve => {
+        await fadeOut({ query: '.media-item' });
 
-    $('body').append($.parseHTML(`
-        <img class="media-item hidden" src="${imagePath}">
-    `));
+        $('body').append($.parseHTML(`
+            <video class="media-item hidden" src="${videoPath}" autoplay>
+        `));
 
-    await fadeIn('.media-item');
+        await fadeIn({ query: '.media-item' });
 
-    tryProcessAction();
-}
-
-async function transitionToVideo({ videoPath }) {
-    await fadeOut('.media-item');
-
-    $('body').append($.parseHTML(`
-        <video class="media-item hidden" src="${videoPath}" autoplay>
-    `));
-
-    await fadeIn('.media-item');
-
-    tryProcessAction();
+        resolve();
+    });
 }
 
 async function init() {
+    let backgroundActionHandler = actionHandlerFactory.fabricate();
+    let foregroundActionHandler = actionHandlerFactory.fabricate();
+
     api.onShowImage((imagePath) => {
-        actionBuffer = {
+        console.log('showing image');
+
+        backgroundActionHandler.addAction({
             action: transitionToImage,
             options: { imagePath }
-        };
-
-        tryProcessAction();
+        });
     });
 
     api.onPlayVideo((videoPath) => {
-        actionBuffer = {
+        console.log('playing video');
+
+        backgroundActionHandler.addAction({
             action: transitionToVideo,
             options: { videoPath }
-        };
-
-        tryProcessAction();
+        });
     });
 
-    api.onUpdateDetails((details) => {
-        details = JSON.parse(details);
+    api.onShowText((md) => {
+        console.log('showing text');
 
-        for (const [key, value] of Object.entries(details)) {
-            $(`#${key}`).html(value);
+        let converter = new showdown.Converter();
+        let html = converter.makeHtml(md);
+        console.log(html);
+        $(`#details`).html(html);
+    });
+
+    api.onClear(type => {
+        console.log('clearing all');
+
+        if (type !== 'text') {
+            backgroundActionHandler.addAction({
+                action: fadeOut,
+                options: { query: '.media-item' }
+            });
+        }
+
+        if (type !== 'media') {
+            foregroundActionHandler.addAction({
+                action: fadeOut,
+                options: { query: '.text-item' }
+            });
         }
     });
 

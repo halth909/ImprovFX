@@ -17,41 +17,35 @@
 
 <body>
     <div id="header">
-        <button id="button-controls">Controls</button>
         <button id="button-details">Show Details</button>
+        <button id="button-controls">Controls</button>
+        <button id="button-clear">Clear All</button>
     </div>
 
-    <div id="panel-controls">
-        <div id="video-buttons">
-            <button id="play-intro" class="video-button">
-                <img class="play-icon" src="./assets/play.png">
-                <p>Play Intro</p>
-            </button>
-            <button id="play-outro" class="video-button">
-                <img class="play-icon" src="./assets/play.png">
-                <p>Play Outro</p>
-            </button>
-        </div>
+    <div id="panel-details" class="panel-full">
+        <h2>Videos</h2>
+        <div id="video-buttons" class="media-buttons-container"></div>
 
-        <div id="media-buttons">
-            <div id="image-buttons">
-                <h2>Backgrounds</h2>
-            </div>
-
-            <div id="sfx-buttons">
-                <h2>SFX</h2>
-            </div>
-        </div>
-    </div>
-
-    <div id="panel-details">
-        <h2>Show Details</h2>
+        <h2>Markdown</h2>
         <label for="title">Title</label>
         <input id="title" type="text" placeholder="Horror Film">
         <label for="players">Players (Name, Name, Name)</label>
         <textarea id="players" rows="2" placeholder="Malcolm Morrison, Thomas Hall"></textarea>
         <label for="credits">Credits (Role, Name, Role, Name)</label>
         <textarea id="credits" rows="4" placeholder="Design, Malcolm Morrison, Software Development, Thomas Hall"></textarea>
+    </div>
+
+    <div id="panel-controls" class="panel-full">
+        <div class="flex-horizontal">
+            <div id="image-panel" class="panel-inner">
+                <h2>Backgrounds</h2>
+                <div id="image-buttons" class="media-buttons-container"></div>
+            </div>
+
+            <div id="sfx-buttons" class="panel-inner">
+                <h2>SFX</h2>
+            </div>
+        </div>
     </div>
 </body>
 

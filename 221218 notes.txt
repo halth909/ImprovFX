@@ -1,5 +1,7 @@
 Audience slowly filters in - opening message on image background
 
+STILL TO DO
+
 Clear button to remove media from show screen
 
 Text is all centered

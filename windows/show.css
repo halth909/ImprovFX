@@ -17,10 +17,14 @@ body {
 
 #details {
     position: fixed;
-    bottom: 10vh;
-    left: 16vh;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     z-index: 1;
 }
 

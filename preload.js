@@ -8,16 +8,22 @@ contextBridge.exposeInMainWorld('api', {
         ipcRenderer.on("listFiles", (event, ...args) => callback(...args));
     },
 
-    // show api 
-    onUpdateDetails: (callback) => {
-        ipcRenderer.on("updateDetails", (event, ...args) => callback(...args));
+    // show text api 
+    onShowText: (callback) => {
+        ipcRenderer.on("showText", (event, ...args) => callback(...args));
     },
 
+    // show media api
     onShowImage: (callback) => {
         ipcRenderer.on("showImage", (event, ...args) => callback(...args));
     },
 
     onPlayVideo: (callback) => {
         ipcRenderer.on("playVideo", (event, ...args) => callback(...args));
-    }
+    },
+
+    // clear all
+    onClear: (callback) => {
+        ipcRenderer.on("clear", (event, ...args) => callback(...args));
+    },
 });

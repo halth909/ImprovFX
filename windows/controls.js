@@ -15,7 +15,7 @@ const details = (_ => {
 })();
 
 async function init() {
-    $('#panel-details').hide();
+    $('#panel-controls').hide();
 
     $(document).on('click', '#button-controls', _ => {
         $('#panel-controls').show();
@@ -27,8 +27,18 @@ async function init() {
         $('#panel-details').show();
     });
 
+    $(document).on('click', '#button-clear', _ => {
+        console.log('clearing all');
+        api.sendMessage('clear', 'all');
+    });
+
     // local interaction
+    $(document).on('click', '.video-button', event => {
+        api.sendMessage('playVideo', $(event.currentTarget).attr('data-url'));
+    });
+
     $(document).on('click', '.image-button', event => {
+        console.log('image clicked');
         api.sendMessage('imageClicked', $(event.currentTarget).attr('data-url'));
     });
 
@@ -54,25 +64,29 @@ async function init() {
         }).play();
     });
 
-    $(document).on('click', '#play-intro', _ => {
-        api.sendMessage('playVideo', '_media/intro.mp4');
-    });
-
-    $(document).on('click', '#play-outro', _ => {
-        api.sendMessage('playVideo', '_media/outro.mp4');
-    });
-
     $(document).on('keyup', 'input, textarea', _ => {
         details.update();
     });
 
     // api events
     api.onListFiles((files) => {
+        for (let i = 0; i < files.videos.length; i++) {
+            const video = files.videos[i];
+            console.log(video);
+
+            $('#video-buttons').append($.parseHTML(`
+                <div class="video-button media-button" data-url="${video.url}">
+                    <video class="video-preview" src="${video.url}" autoplay muted loop>
+                    <p>${video.name}</p>
+                </div>
+            `));
+        }
+
         for (let i = 0; i < files.images.length; i++) {
             const image = files.images[i];
 
             $('#image-buttons').append($.parseHTML(`
-                <div class="image-button" data-url="${image.url}">
+                <div class="image-button media-button" data-url="${image.url}">
                     <img class="image-preview" src="${image.url}">
                     <p>${image.name}</p>
                 </div>
@@ -92,12 +106,12 @@ async function init() {
         }
     });
 
-    api.onUpdateDetails((details) => {
-        details = JSON.parse(details);
+    api.onShowText((details) => {
+        //     details = JSON.parse(details);
 
-        for (const [key, value] of Object.entries(details)) {
-            $(`#${key}`).val(value);
-        }
+        //     for (const [key, value] of Object.entries(details)) {
+        //         $(`#${key}`).val(value);
+        //     }
     });
 
     // request media files

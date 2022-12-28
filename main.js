@@ -43,13 +43,17 @@ app.whenReady().then(_ => {
         showWindow.webContents.send('showImage', imagePath);
     });
 
-    ipcMain.on('playVideo', (event, videoName) => {
-        const videoPath = path.join(__dirname, videoName);
+    ipcMain.on('playVideo', (event, videoPath) => {
         showWindow.webContents.send('playVideo', videoPath);
+    });
+
+    ipcMain.on('clear', (event, type) => {
+        showWindow.webContents.send('clear', type);
     });
 
     ipcMain.on('getFiles', _ => {
         let result = {
+            videos: getFilesData('_media/videos'),
             images: getFilesData('_media/images'),
             sfx: getFilesData('_media/sfx')
         }
