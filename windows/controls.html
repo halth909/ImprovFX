@@ -26,13 +26,33 @@
         <h2>Videos</h2>
         <div id="video-buttons" class="media-buttons-container"></div>
 
-        <h2>Markdown</h2>
-        <label for="title">Title</label>
-        <input id="title" type="text" placeholder="Horror Film">
-        <label for="players">Players (Name, Name, Name)</label>
-        <textarea id="players" rows="2" placeholder="Malcolm Morrison, Thomas Hall"></textarea>
-        <label for="credits">Credits (Role, Name, Role, Name)</label>
-        <textarea id="credits" rows="4" placeholder="Design, Malcolm Morrison, Software Development, Thomas Hall"></textarea>
+        <div id="markdown-panel">
+            <h2>Markdown</h2>
+            <div class="markdown-container">
+                <div class="markdown-header">
+                    <label for="title">Title</label>
+                    <button class="markdown-show">Show</button>
+                </div>
+                <input id="title" type="text" placeholder="Horror Film">
+            </div>
+            <div class="markdown-container">
+                <div class="markdown-header">
+                    <label for="players">Players</label>
+                    <button class="markdown-show">Show</button>
+                </div>
+                <textarea id="players" rows="2" placeholder="Malcolm Morrison, Thomas Hall"></textarea>
+            </div>
+            <div class="markdown-container">
+                <div class="markdown-header">
+                    <label for="credits">Credits</label>
+                    <button class="markdown-show">Show</button>
+                </div>
+                <textarea id="credits" rows="4" placeholder="Design, Malcolm Morrison, Software Development, Thomas Hall"></textarea>
+            </div>
+            <div id="custom-markdown-panel">
+                <button id="add-markdown">+</button>
+            </div>
+        </div>
     </div>
 
     <div id="panel-controls" class="panel-full">

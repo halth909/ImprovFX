@@ -13,15 +13,25 @@
 body {
     display: flex;
     flex-direction: column;
+    height: 100vh;
 }
 
 h2 {
     margin-bottom: 10px;
 }
 
-input,
-textarea {
-    margin-bottom: 10px;
+.markdown-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 20px;
+}
+
+.markdown-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 5px;
 }
 
 button,
@@ -60,6 +70,7 @@ button:hover {
     flex-direction: column;
     gap: 5px;
     padding: 20px 30px;
+    overflow: scroll;
 }
 
 #video-buttons {
@@ -69,8 +80,7 @@ button:hover {
     flex-direction: row;
 }
 
-video,
-.image-preview {
+.media-preview {
     width: 160px;
     height: 90px;
     object-fit: contain;

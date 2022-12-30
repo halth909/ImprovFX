@@ -6,6 +6,7 @@ const path = require('path');
 const windowDefaults = {
     width: 800,
     height: 600,
+    y: 0,
     webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
     },
@@ -13,25 +14,6 @@ const windowDefaults = {
 
 let controlsWindow;
 let showWindow;
-
-const media = (_ => {
-    let _public = {};
-
-    _public.list = (dir) => {
-        const mediaPath = path.join(__dirname, `_media/${dir}`);
-        fs.readdir(mediaPath, (err, files) => {
-            if (err) {
-                console.error(err);
-            }
-
-            controlsWindow.webContents.send(`${dir}-list`, {
-                path: files
-            });
-        });
-    }
-
-    return _public;
-})();
 
 app.whenReady().then(_ => {
     ipcMain.on('detailsUpdated', (event, details) => {
@@ -45,6 +27,10 @@ app.whenReady().then(_ => {
 
     ipcMain.on('playVideo', (event, videoPath) => {
         showWindow.webContents.send('playVideo', videoPath);
+    });
+
+    ipcMain.on('showText', (event, md) => {
+        showWindow.webContents.send('showText', md);
     });
 
     ipcMain.on('clear', (event, type) => {
@@ -70,8 +56,7 @@ app.whenReady().then(_ => {
             console.log(err);
         }
 
-        controlsWindow.webContents.send('updateDetails', details);
-        showWindow.webContents.send('updateDetails', details);
+        controlsWindow.webContents.send('loadPreviousText', details);
 
         function getFilesData(localPath) {
             let filesData = [];
@@ -89,18 +74,24 @@ app.whenReady().then(_ => {
         }
     });
 
-    controlsWindow = new BrowserWindow(windowDefaults);
+    controlsWindow = new BrowserWindow({
+        ...windowDefaults,
+        x: 0
+    });
+
     controlsWindow.loadFile('windows/controls.html');
 
-    showWindow = new BrowserWindow(windowDefaults);
+    showWindow = new BrowserWindow({
+        ...windowDefaults,
+        x: windowDefaults.width
+    });
+
     showWindow.loadFile('windows/show.html');
+    showWindow.setMenu(null);
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
     });
-
-    media.list('images');
-    media.list('sfx');
 });
 
 app.on('window-all-closed', () => {

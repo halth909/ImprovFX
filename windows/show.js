@@ -107,6 +107,38 @@ function transitionToVideo({ videoPath }) {
 
         await fadeIn({ query: '.media-item' });
 
+        $('.media-item').on('timeupdate', event => {
+            let current = event.target.currentTime;
+
+            if (isNaN(current)) {
+                return;
+            }
+
+            let target = event.target.duration - transitionDuration / 2000;
+
+            if (isNaN(target) || current < target) {
+                return;
+            }
+
+            fadeOut({ query: '.media-item' });
+        });
+
+        resolve();
+    });
+}
+
+function transitionToText({ html }) {
+    return new Promise(async resolve => {
+        await fadeOut({ query: '.text-item' });
+
+        $('body').append($.parseHTML(`
+            <div class="text-item hidden">
+                ${html}
+            </div>
+        `));
+
+        await fadeIn({ query: '.text-item' });
+
         resolve();
     });
 }
@@ -139,7 +171,10 @@ async function init() {
         let converter = new showdown.Converter();
         let html = converter.makeHtml(md);
         console.log(html);
-        $(`#details`).html(html);
+        foregroundActionHandler.addAction({
+            action: transitionToText,
+            options: { html }
+        });
     });
 
     api.onClear(type => {

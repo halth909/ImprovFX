@@ -8,6 +8,10 @@ contextBridge.exposeInMainWorld('api', {
         ipcRenderer.on("listFiles", (event, ...args) => callback(...args));
     },
 
+    onLoadPreviousText: (callback) => {
+        ipcRenderer.on("loadPreviousText", (event, ...args) => callback(...args));
+    },
+
     // show text api 
     onShowText: (callback) => {
         ipcRenderer.on("showText", (event, ...args) => callback(...args));
