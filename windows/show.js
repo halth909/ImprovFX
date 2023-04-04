@@ -1,3 +1,5 @@
+const transitionDuration = 1000; // milliseconds
+
 const milliseconds = (milliseconds) => {
     return new Promise(async(resolve) => {
         setTimeout(_ => {
@@ -13,8 +15,6 @@ const animationFrame = _ => {
         });
     })
 }
-
-const transitionDuration = 5000; // milliseconds
 
 let actionHandlerFactory = {
     fabricate: _ => {
@@ -55,8 +55,14 @@ let actionHandlerFactory = {
     }
 }
 
-function fadeOut({ query }) {
+function hide({ query, instant = false }) {
     return new Promise(async resolve => {
+        if (instant) {
+            $(query).remove();
+            return resolve();
+        }
+
+        $(query).addClass('animated');
         $(query).addClass('hidden');
 
         if ($(query).length > 0) {
@@ -69,12 +75,18 @@ function fadeOut({ query }) {
     });
 }
 
-function fadeIn({ query }) {
+function show({ query, instant = false }) {
     return new Promise(async resolve => {
+        if (instant) {
+            $(query).removeClass('hidden');
+            return resolve();
+        }
+
         await animationFrame();
         await animationFrame();
 
         $(query).addClass('animated');
+
         $(query).removeClass('hidden');
 
         await milliseconds(transitionDuration / 2);
@@ -85,27 +97,40 @@ function fadeIn({ query }) {
 
 function transitionToImage({ imagePath }) {
     return new Promise(async resolve => {
-        await fadeOut({ query: '.media-item' });
+        if (imagePath == null) {
+            await hide({ query: 'img' });
+            return resolve();
+        }
+
+        await hide({ query: '.media-item' });
 
         $('body').append($.parseHTML(`
             <img class="media-item hidden" src="${imagePath}">
         `));
 
-        await fadeIn({ query: '.media-item' });
+        await show({ query: '.media-item' });
 
         resolve();
     });
 }
 
-function transitionToVideo({ videoPath }) {
+function transitionToVideo({ videoPath, instant = true }) {
     return new Promise(async resolve => {
-        await fadeOut({ query: '.media-item' });
+        if (videoPath == null) {
+            await hide({ query: 'video', instant });
+            return resolve();
+        }
+
+        await hide({ query: '.media-item' });
 
         $('body').append($.parseHTML(`
             <video class="media-item hidden" src="${videoPath}" autoplay>
         `));
 
-        await fadeIn({ query: '.media-item' });
+        await show({
+            query: '.media-item',
+            instant
+        });
 
         $('.media-item').on('timeupdate', event => {
             let current = event.target.currentTime;
@@ -114,13 +139,20 @@ function transitionToVideo({ videoPath }) {
                 return;
             }
 
-            let target = event.target.duration - transitionDuration / 2000;
+            let target = event.target.duration;
+
+            if (instant) {
+                target -= transitionDuration / 2000;
+            }
 
             if (isNaN(target) || current < target) {
                 return;
             }
 
-            fadeOut({ query: '.media-item' });
+            hide({
+                query: '.media-item',
+                instant: true
+            });
         });
 
         resolve();
@@ -129,7 +161,11 @@ function transitionToVideo({ videoPath }) {
 
 function transitionToText({ html }) {
     return new Promise(async resolve => {
-        await fadeOut({ query: '.text-item' });
+        await hide({ query: '.text-item' });
+
+        if (html == null) {
+            return resolve();
+        }
 
         $('body').append($.parseHTML(`
             <div class="text-item hidden">
@@ -137,63 +173,69 @@ function transitionToText({ html }) {
             </div>
         `));
 
-        await fadeIn({ query: '.text-item' });
+        await show({ query: '.text-item' });
 
         resolve();
     });
 }
 
+const backgroundActionHandler = actionHandlerFactory.fabricate();
+const foregroundActionHandler = actionHandlerFactory.fabricate();
+
+function showImage(imagePath) {
+    console.log('showing image');
+
+    backgroundActionHandler.addAction({
+        action: transitionToImage,
+        options: { imagePath }
+    });
+};
+
+function playVideo(videoPath, instant = true) {
+    console.log('playing video');
+
+    backgroundActionHandler.addAction({
+        action: transitionToVideo,
+        options: {
+            videoPath,
+            instant
+        }
+    });
+}
+
+function showText(md) {
+    console.log('showing text');
+
+    let converter = new showdown.Converter();
+    let html = converter.makeHtml(md);
+    console.log(html);
+    foregroundActionHandler.addAction({
+        action: transitionToText,
+        options: { html }
+    });
+}
+
+function clear(type) {
+    console.log(`clearing ${type}`);
+
+    if (type == 'video') {
+        playVideo(null, false);
+    } else if (type == 'text') {
+        showText();
+    } else if (type == 'image') {
+        showImage();
+    } else {
+        playVideo(null, false);
+        showText();
+        showImage();
+    }
+}
+
 async function init() {
-    let backgroundActionHandler = actionHandlerFactory.fabricate();
-    let foregroundActionHandler = actionHandlerFactory.fabricate();
-
-    api.onShowImage((imagePath) => {
-        console.log('showing image');
-
-        backgroundActionHandler.addAction({
-            action: transitionToImage,
-            options: { imagePath }
-        });
-    });
-
-    api.onPlayVideo((videoPath) => {
-        console.log('playing video');
-
-        backgroundActionHandler.addAction({
-            action: transitionToVideo,
-            options: { videoPath }
-        });
-    });
-
-    api.onShowText((md) => {
-        console.log('showing text');
-
-        let converter = new showdown.Converter();
-        let html = converter.makeHtml(md);
-        console.log(html);
-        foregroundActionHandler.addAction({
-            action: transitionToText,
-            options: { html }
-        });
-    });
-
-    api.onClear(type => {
-        console.log('clearing all');
-
-        if (type !== 'text') {
-            backgroundActionHandler.addAction({
-                action: fadeOut,
-                options: { query: '.media-item' }
-            });
-        }
-
-        if (type !== 'media') {
-            foregroundActionHandler.addAction({
-                action: fadeOut,
-                options: { query: '.text-item' }
-            });
-        }
-    });
+    api.onShowImage(showImage);
+    api.onPlayVideo(playVideo);
+    api.onShowText(showText);
+    api.onClear(clear);
 
     api.sendMessage('getConfig');
 }

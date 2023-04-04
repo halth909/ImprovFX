@@ -1,3 +1,42 @@
+const audioCancelDuration = 1000;
+
+const audio = (_ => {
+    let player = null;
+    let cancelTimeoutId = null;
+
+    let _public = {};
+
+    _public.play = src => {
+        if (player) {
+            player.stop();
+        }
+
+        if (cancelTimeoutId) {
+            clearTimeout(cancelTimeoutId);
+        }
+
+        player = new Howl({ src });
+        player.play();
+    }
+
+    _public.cancel = _ => {
+        console.log(player);
+        if (!player) {
+            return;
+        }
+
+        player.fade(1, 0, audioCancelDuration);
+
+        cancelTimeoutId = setTimeout(_ => {
+            if (player) {
+                player.stop();
+            }
+        }, 5000);
+    }
+
+    return _public;
+})();
+
 const details = (_ => {
     let _public = {};
 
@@ -35,22 +74,30 @@ const details = (_ => {
     return _public;
 })();
 
+function hidePanels() {
+    $('.panel-full').hide();
+    $('.header-tab').removeClass('selected');
+}
+
 async function init() {
-    $('#panel-controls').hide();
+    $(document).on('click', '.header-tab', event => {
+        hidePanels();
 
-    $(document).on('click', '#button-controls', _ => {
-        $('#panel-controls').show();
-        $('#panel-details').hide();
+        const $target = $(event.target);
+        $(`#panel-${$target.attr ('data-panel')}`).show();
+        $target.addClass('selected');
     });
 
-    $(document).on('click', '#button-details', _ => {
-        $('#panel-controls').hide();
-        $('#panel-details').show();
+    $(document).on('click', '.clear', event => {
+        const type = $(event.target).attr('data-type');
+
+        api.sendMessage('clear', type);
+        audio.cancel();
     });
 
-    $(document).on('click', '#button-clear', _ => {
-        console.log('clearing all');
-        api.sendMessage('clear', 'all');
+    $(document).on('click', '#clear-sfx', _ => {
+        console.log('clearing sfx');
+        audio.cancel();
     });
 
     // local interaction
@@ -81,9 +128,8 @@ async function init() {
     });
 
     $(document).on('click', '.sfx-button', event => {
-        new Howl({
-            src: [$(event.currentTarget).attr('data-url')]
-        }).play();
+        const src = $(event.currentTarget).attr('data-url');
+        audio.play(src);
     });
 
     $(document).on('keydown', event => {
@@ -114,7 +160,7 @@ async function init() {
 
             $('#video-buttons').append($.parseHTML(`
                 <div class="video-button media-button" data-url="${video.url}">
-                    <video class="media-preview" src="${video.url}" autoplay muted loop></video>
+                    <video class="media-preview" src="${video.url}#t=5"></video>
                     <p>${video.name}</p>
                 </div>
             `));
@@ -162,6 +208,7 @@ async function init() {
 
     // request media files
     api.sendMessage('getFiles');
+    document.getElementsByClassName('header-tab')[0].click();
 }
 
 window.onload = _ => {

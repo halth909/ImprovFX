@@ -17,17 +17,36 @@
 
 <body>
     <div id="header">
-        <button id="button-details">Show Details</button>
-        <button id="button-controls">Controls</button>
-        <button id="button-clear">Clear All</button>
+        <div id="header-tabs">
+            <!-- <button id="button-settings" data-panel="settings" class="header-tab selected">Settings</button> -->
+            <button id="button-details" data-panel="details" class="header-tab">Show Details</button>
+            <button id="button-controls" data-panel="controls" class="header-tab">Controls</button>
+        </div>
+        <button id="button-clear" class="clear" data-type="all">Clear All</button>
+    </div>
+
+    <div id="panel-settings" class="panel-full">
+        <label for="sfx-dir">Audio Directory</label>
+        <input type="file" id="sfx-dir" webkitdirectory directory/>
+        <label for="images-dir">Images Directory</label>
+        <input type="file" id="images-dir" webkitdirectory directory/>
+        <label for="videos-dir">Videos Directory</label>
+        <input type="file" id="videos-dir" webkitdirectory directory/>
+        <button id="load-media">Load Media</button>
     </div>
 
     <div id="panel-details" class="panel-full">
-        <h2>Videos</h2>
+        <div class="section-header">
+            <h2>Videos</h2>
+            <button class="clear" data-type="video">Clear Video</button>
+        </div>
         <div id="video-buttons" class="media-buttons-container"></div>
 
         <div id="markdown-panel">
-            <h2>Markdown</h2>
+            <div class="section-header">
+                <h2>Markdown</h2>
+                <button class="clear" data-type="text">Clear Markdown</button>
+            </div>
             <div class="markdown-container">
                 <div class="markdown-header">
                     <label for="title">Title</label>
@@ -58,12 +77,18 @@
     <div id="panel-controls" class="panel-full">
         <div class="flex-horizontal">
             <div id="image-panel" class="panel-inner">
-                <h2>Backgrounds</h2>
+                <div class="section-header">
+                    <h2>Backgrounds</h2>
+                    <button class="clear" data-type="image">Clear Background</button>
+                </div>
                 <div id="image-buttons" class="media-buttons-container"></div>
             </div>
 
             <div id="sfx-buttons" class="panel-inner">
-                <h2>SFX</h2>
+                <div class="section-header">
+                    <h2>SFX</h2>
+                    <button id="clear-sfx">Clear SFX</button>
+                </div>
             </div>
         </div>
     </div>
