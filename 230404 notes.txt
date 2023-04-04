@@ -1,0 +1,9 @@
+Videos
+ - No fade on video transitions
+ - No animated thumbnails - static image.
+
+Individual cancel button for text, SFX, image, video
+Playing an image or video should automatically remove text
+Cancelled video and sfx should fade out
+
+Various UI improvements

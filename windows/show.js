@@ -102,7 +102,7 @@ function transitionToImage({ imagePath }) {
             return resolve();
         }
 
-        await hide({ query: '.media-item' });
+        await hide({ query: '.media-item, .text-item' });
 
         $('body').append($.parseHTML(`
             <img class="media-item hidden" src="${imagePath}">
@@ -121,7 +121,7 @@ function transitionToVideo({ videoPath, instant = true }) {
             return resolve();
         }
 
-        await hide({ query: '.media-item' });
+        await hide({ query: '.media-item, .text-item' });
 
         $('body').append($.parseHTML(`
             <video class="media-item hidden" src="${videoPath}" autoplay>
