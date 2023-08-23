@@ -32,6 +32,10 @@ app.whenReady().then(_ => {
         showWindowManager.send('showText', md);
     });
 
+    ipcMain.on('fontSelected', (event, fontPath) => {
+        showWindowManager.send('useFont', fontPath);
+    });
+
     ipcMain.on('clear', (event, type) => {
         showWindowManager.send('clear', type);
     });
@@ -40,7 +44,8 @@ app.whenReady().then(_ => {
         let result = {
             videos: getFilesData('_media/videos'),
             images: getFilesData('_media/images'),
-            sfx: getFilesData('_media/sfx')
+            sfx: getFilesData('_media/sfx'),
+            fonts: getFilesData('_media/fonts')
         }
 
         controlsWindow.webContents.send(`listFiles`, result);
@@ -114,12 +119,12 @@ const showWindowManager = (() => {
         showWindow = new BrowserWindow({
             ...windowDefaults,
             x: windowDefaults.width,
-            titleBarOverlay: true
+            //titleBarOverlay: true
         });
 
         showWindow.loadFile('windows/show.html');
-        showWindow.setMenu(null);
-        showWindow.setMenuBarVisibility(false);
+        //showWindow.setMenu(null);
+        //showWindow.setMenuBarVisibility(false);
     }
 
     let send = (id, content) => {

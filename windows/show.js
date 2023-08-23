@@ -215,6 +215,18 @@ function showText(md) {
     });
 }
 
+function useFont(fontPath) {
+    if ($('#custom-font').length == 0) {
+        $("head").append(`
+            <style id="custom-font"></style>
+        `);
+    }
+
+    $('#custom-font').html(`
+        @font-face { font-family: CustomFont; src: url('${decodeURI(fontPath).replaceAll ('\\', '/')}'); } 
+    `);
+}
+
 function clear(type) {
     console.log(`clearing ${type}`);
 
@@ -235,6 +247,7 @@ async function init() {
     api.onShowImage(showImage);
     api.onPlayVideo(playVideo);
     api.onShowText(showText);
+    api.onUseFont(useFont);
     api.onClear(clear);
 
     api.sendMessage('getConfig');

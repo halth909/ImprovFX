@@ -132,6 +132,10 @@ async function init() {
         audio.play(src);
     });
 
+    $(document).on('input', '#font-select', event => {
+        api.sendMessage('fontSelected', $(event.currentTarget).val());
+    })
+
     $(document).on('keydown', event => {
         const num = parseInt(event.key);
 
@@ -186,6 +190,16 @@ async function init() {
                     <img class="play-icon" src="./assets/play.png">
                     <p>${keymarker}${sfx.name}</p>
                 </button>
+            `));
+        }
+
+        for (let i = 0; i < files.fonts.length; i++) {
+            const font = files.fonts[i];
+
+            $('#font-select').append($.parseHTML(`
+                <option class="font-item" value="${encodeURI(font.url)}">
+                    ${font.name}
+                </options>
             `));
         }
     });

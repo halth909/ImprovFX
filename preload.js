@@ -26,6 +26,10 @@ contextBridge.exposeInMainWorld('api', {
         ipcRenderer.on("playVideo", (event, ...args) => callback(...args));
     },
 
+    onUseFont: (callback) => {
+        ipcRenderer.on("useFont", (event, ...args) => callback(...args));
+    },
+
     // clear all
     onClear: (callback) => {
         ipcRenderer.on("clear", (event, ...args) => callback(...args));
