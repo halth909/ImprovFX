@@ -1,8 +1,8 @@
 {
     "name": "malcolm-app",
     "version": "1.0.0",
-    "description": "",
-    "main": "main.js",
+    "description": "Malcolm App",
+    "main": ".webpack/main",
     "scripts": {
         "start": "electron .",
         "package": "electron-forge package",
@@ -14,14 +14,18 @@
         "type": "git",
         "url": "git+https://github.com/halth909/Malcolm-App.git"
     },
-    "author": "",
+    "author": {
+        "name": "Thomas Hall",
+        "email": "thomas.hall.12@gmail.com",
+        "url": "https://thomashall.dev"
+    },
     "license": "ISC",
     "bugs": {
         "url": "https://github.com/halth909/Malcolm-App/issues"
     },
     "homepage": "https://github.com/halth909/Malcolm-App#readme",
     "devDependencies": {
-        "@electron-forge/cli": "^6.0.4",
+        "@electron-forge/cli": "^6.4.1",
         "@electron-forge/maker-deb": "^6.0.4",
         "@electron-forge/maker-rpm": "^6.0.4",
         "@electron-forge/maker-squirrel": "^6.0.4",

@@ -61,6 +61,8 @@ app.whenReady().then(_ => {
         function getFilesData(localPath) {
             let filesData = [];
 
+            enforceDirectory(localPath);
+
             const files = fs.readdirSync(localPath);
 
             for (let i = 0; i < files.length; i++) {
@@ -71,6 +73,14 @@ app.whenReady().then(_ => {
             }
 
             return filesData;
+        }
+
+        function enforceDirectory(path) {
+            if (fs.existsSync(path)) {
+                return;
+            }
+
+            fs.mkdirSync(path, options = { recursive: true });
         }
     });
 
@@ -83,14 +93,19 @@ app.whenReady().then(_ => {
 
     showWindow = new BrowserWindow({
         ...windowDefaults,
-        x: windowDefaults.width
+        x: windowDefaults.width,
+        titleBarOverlay: true,
+        fullscreenable: false
     });
 
     showWindow.loadFile('windows/show.html');
     showWindow.setMenu(null);
+    showWindow.setMenuBarVisibility(false);
 
     app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) createWindow()
+        if (BrowserWindow.getAllWindows().length === 0) {
+            createWindow();
+        }
     });
 });
 
