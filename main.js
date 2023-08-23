@@ -1,10 +1,10 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
-const { fstat } = require('original-fs');
 const fs = require('fs');
 const path = require('path');
 
 const windowDefaults = {
-    width: 800,
+    width: 820,
+    minWidth: 820,
     height: 600,
     y: 0,
     webPreferences: {
@@ -13,28 +13,27 @@ const windowDefaults = {
 };
 
 let controlsWindow;
-let showWindow;
 
 app.whenReady().then(_ => {
     ipcMain.on('detailsUpdated', (event, details) => {
-        showWindow.webContents.send('updateDetails', details);
+        showWindowManager.send('updateDetails', details);
         fs.writeFileSync(path.join(__dirname, 'details.txt'), details);
     });
 
     ipcMain.on('imageClicked', (event, imagePath) => {
-        showWindow.webContents.send('showImage', imagePath);
+        showWindowManager.send('showImage', imagePath);
     });
 
     ipcMain.on('playVideo', (event, videoPath) => {
-        showWindow.webContents.send('playVideo', videoPath);
+        showWindowManager.send('playVideo', videoPath);
     });
 
     ipcMain.on('showText', (event, md) => {
-        showWindow.webContents.send('showText', md);
+        showWindowManager.send('showText', md);
     });
 
     ipcMain.on('clear', (event, type) => {
-        showWindow.webContents.send('clear', type);
+        showWindowManager.send('clear', type);
     });
 
     ipcMain.on('getFiles', _ => {
@@ -91,16 +90,7 @@ app.whenReady().then(_ => {
 
     controlsWindow.loadFile('windows/controls.html');
 
-    showWindow = new BrowserWindow({
-        ...windowDefaults,
-        x: windowDefaults.width,
-        titleBarOverlay: true,
-        fullscreenable: false
-    });
-
-    showWindow.loadFile('windows/show.html');
-    showWindow.setMenu(null);
-    showWindow.setMenuBarVisibility(false);
+    showWindowManager.init();
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
@@ -112,3 +102,30 @@ app.whenReady().then(_ => {
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
 });
+
+const showWindowManager = (() => {
+    let showWindow;
+
+    let init = () => {
+        if (showWindow != null) {
+            return;
+        }
+
+        showWindow = new BrowserWindow({
+            ...windowDefaults,
+            x: windowDefaults.width,
+            titleBarOverlay: true
+        });
+
+        showWindow.loadFile('windows/show.html');
+        showWindow.setMenu(null);
+        showWindow.setMenuBarVisibility(false);
+    }
+
+    let send = (id, content) => {
+        init();
+        showWindow.webContents.send(id, content);
+    }
+
+    return { init, send };
+})();

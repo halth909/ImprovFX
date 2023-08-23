@@ -2,7 +2,7 @@
     "name": "malcolm-app",
     "version": "1.0.0",
     "description": "Malcolm App",
-    "main": ".webpack/main",
+    "main": "main",
     "scripts": {
         "start": "electron .",
         "package": "electron-forge package",
