@@ -1,0 +1,8 @@
+Undo button for accidentally removing text
+
+Remove buttons to top bar
+
+Tabs renamed to "Video/Text" and "Image/SFX"
+
+Drop shadow on text
+ - White text with black shadow

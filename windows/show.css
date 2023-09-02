@@ -9,6 +9,7 @@
     box-sizing: border-box;
     color: white;
     font-family: CustomFont, Arial, Helvetica, sans-serif, sans-serif;
+    font-size: 4vh;
 }
 
 body {
@@ -80,6 +81,7 @@ p {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    text-shadow: 1px 1px 4px black, -1px 1px 4px black, 1px -1px 4px black, -1px -1px 4px black;
 }
 
 .animated {

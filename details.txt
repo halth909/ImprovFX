@@ -1,1 +1,0 @@
-{"sfx-dir":"","images-dir":"","videos-dir":"","title":"Horror","players":"f","credits":"- Tom\n- Malcolm","custom-0":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.","custom-1":"# **Tom**","custom-2":"","custom-3":""}

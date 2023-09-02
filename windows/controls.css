@@ -88,13 +88,19 @@ button.header-tab.selected {
     background-color: var(--color-white);
 }
 
-#button-clear {
-    margin: 8px 0 0 0;
-    background-color: var(--color-blue);
+#header-clear__buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
-#button-clear:hover {
-    background-color: var(--color-white);
+#header-clear__label {
+    color: white;
+    margin-right: 10px;
+}
+
+.clear {
+    width: 50px;
 }
 
 .panel-full {

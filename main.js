@@ -17,7 +17,8 @@ let controlsWindow;
 app.whenReady().then(_ => {
     ipcMain.on('detailsUpdated', (event, details) => {
         showWindowManager.send('updateDetails', details);
-        fs.writeFileSync(path.join(__dirname, 'details.txt'), details);
+        console.log (details);
+        fs.writeFileSync(path.join(__dirname, 'details.json'), details);
     });
 
     ipcMain.on('imageClicked', (event, imagePath) => {
@@ -53,7 +54,7 @@ app.whenReady().then(_ => {
         let details;
 
         try {
-            details = fs.readFileSync(path.join(__dirname, 'details.txt'), {
+            details = fs.readFileSync(path.join(__dirname, 'details.json'), {
                 encoding: 'utf8'
             });
         } catch (err) {

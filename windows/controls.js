@@ -38,25 +38,41 @@ const audio = (_ => {
 })();
 
 const details = (_ => {
+    let customHistory = [];
+
     let _public = {};
 
     _public.update = _ => {
-        let result = {};
+        let result = {
+            "current": {}
+        };
 
         $('input, textarea').each((index, element) => {
-            result[$(element).attr('id')] = $(element).val();
+            console.log (index, element, $(element).val());
+            result["current"][$(element).attr('id')] = $(element).val();
         });
+
+        result["history"] = customHistory;
 
         api.sendMessage('detailsUpdated', JSON.stringify(result));
     }
 
+    _public.loadHistory = (savedHistory) => {
+        customHistory = savedHistory;
+    }
+
     _public.add = ({ key, index } = {}) => {
+        console.log (key, index);
+        let value = "";
+
         if (typeof key === 'undefined') {
             key = `custom-${index}`;
-        }
 
-        if (typeof index === 'undefined') {
-            index = parseInt(key.substring(7));
+            console.log (customHistory);
+
+            if (customHistory.length > 0) {
+                value = customHistory.pop();
+            }
         }
 
         $('#add-markdown').before($.parseHTML(`
@@ -66,9 +82,30 @@ const details = (_ => {
                     <button class="remove-markdown">Remove</button>
                     <button class="markdown-show">Show</button>
                 </div>
-                <textarea id="${key}" rows="4" placeholder="Custom markdown"></textarea>
+                <textarea id="${key}" class="custom-markdown__textarea" rows="4" placeholder="Custom markdown"></textarea>
             </div>
         `));
+
+        if (value != "") {
+            $(`#${key}`).val(value);
+        }
+    }
+
+    _public.remove = (element) => {
+        let textarea = $(element).find ("textarea")[0];
+        let value = textarea.value;
+
+        if (value != "") {
+            customHistory.push (value);
+        }
+
+        element.remove ();
+
+        $(".custom-markdown__textarea").each ((index, element) => {
+            $(element).attr ("id", `#custom-${index}`);
+        });
+
+        _public.update ();
     }
 
     return _public;
@@ -90,14 +127,20 @@ async function init() {
 
     $(document).on('click', '.clear', event => {
         const type = $(event.target).attr('data-type');
+        console.log(`clearing ${type}`);
 
-        api.sendMessage('clear', type);
-        audio.cancel();
-    });
-
-    $(document).on('click', '#clear-sfx', _ => {
-        console.log('clearing sfx');
-        audio.cancel();
+        switch (type) {
+            case "all":
+                api.sendMessage('clear', type);
+                audio.cancel ();
+                break;
+            case "sfx":
+                audio.cancel ();
+                break;
+            default:
+                api.sendMessage('clear', type);
+                break;
+        }
     });
 
     // local interaction
@@ -114,12 +157,11 @@ async function init() {
 
     $(document).on('click', '#add-markdown', _ => {
         let index = $('.custom-markdown').length;
-
         details.add({ index });
     });
 
     $(document).on('click', '.remove-markdown', event => {
-        $(event.target).closest('.markdown-container').remove();
+        details.remove ($(event.target).closest('.markdown-container'));
     });
 
     $(document).on('click', '.image-button', event => {
@@ -136,21 +178,21 @@ async function init() {
         api.sendMessage('fontSelected', $(event.currentTarget).val());
     })
 
-    $(document).on('keydown', event => {
-        const num = parseInt(event.key);
+    // $(document).on('keydown', event => {
+    //     const num = parseInt(event.key);
 
-        if (isNaN(num)) {
-            return;
-        }
+    //     if (isNaN(num)) {
+    //         return;
+    //     }
 
-        if (num > $('.sfx-button').length) {
-            return;
-        }
+    //     if (num > $('.sfx-button').length) {
+    //         return;
+    //     }
 
-        new Howl({
-            src: [$('.sfx-button').eq(num - 1).attr('data-url')]
-        }).play();
-    });
+    //     new Howl({
+    //         src: [$('.sfx-button').eq(num - 1).attr('data-url')]
+    //     }).play();
+    // });
 
     $(document).on('keyup', 'input, textarea', _ => {
         details.update();
@@ -209,15 +251,21 @@ async function init() {
 
         previousText = JSON.parse(previousText);
 
-        for (const [key, value] of Object.entries(previousText)) {
-            let $elements = $(`#${key}`);
+        for (const [key, value] of Object.entries(previousText["current"])) {
+            let element = document.getElementById (key);
 
-            if ($elements.length === 0) {
-                details.add({ key });
+            if (element == null) {
+                details.add({ key, value });
             }
 
-            $(`#${key}`).val(value);
+            element = document.getElementById (key);
+
+            if (value != "") {
+                element.value = value;
+            }
         }
+
+        details.loadHistory (previousText["history"]);
     });
 
     // request media files
