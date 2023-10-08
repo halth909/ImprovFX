@@ -2,6 +2,10 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const fs = require('fs');
 const path = require('path');
 
+function isDev() {
+    return process.argv[2] == '--dev';
+}
+
 const windowDefaults = {
     width: 820,
     minWidth: 820,
@@ -17,7 +21,7 @@ let controlsWindow;
 app.whenReady().then(_ => {
     ipcMain.on('detailsUpdated', (event, details) => {
         showWindowManager.send('updateDetails', details);
-        console.log (details);
+        console.log(details);
         fs.writeFileSync(path.join(__dirname, 'details.json'), details);
     });
 
@@ -43,10 +47,10 @@ app.whenReady().then(_ => {
 
     ipcMain.on('getFiles', _ => {
         let result = {
-            videos: getFilesData('_media/videos'),
-            images: getFilesData('_media/images'),
-            sfx: getFilesData('_media/sfx'),
-            fonts: getFilesData('_media/fonts')
+            videos: getFilesData('videos'),
+            images: getFilesData('images'),
+            sfx: getFilesData('sfx'),
+            fonts: getFilesData('fonts')
         }
 
         controlsWindow.webContents.send(`listFiles`, result);
@@ -64,11 +68,13 @@ app.whenReady().then(_ => {
         controlsWindow.webContents.send('loadPreviousText', details);
 
         function getFilesData(localPath) {
+            let prefix = isDev() ? "" : "resources/app/"
+            localPath = `_media/${localPath}`;
             let filesData = [];
 
-            enforceDirectory(localPath);
+            enforceDirectory(`${prefix}${localPath}`);
 
-            const files = fs.readdirSync(localPath);
+            const files = fs.readdirSync(`${prefix}${localPath}`);
 
             for (let i = 0; i < files.length; i++) {
                 filesData.push({

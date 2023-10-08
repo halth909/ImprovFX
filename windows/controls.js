@@ -48,7 +48,7 @@ const details = (_ => {
         };
 
         $('input, textarea').each((index, element) => {
-            console.log (index, element, $(element).val());
+            console.log(index, element, $(element).val());
             result["current"][$(element).attr('id')] = $(element).val();
         });
 
@@ -62,13 +62,13 @@ const details = (_ => {
     }
 
     _public.add = ({ key, index } = {}) => {
-        console.log (key, index);
+        console.log(key, index);
         let value = "";
 
         if (typeof key === 'undefined') {
             key = `custom-${index}`;
 
-            console.log (customHistory);
+            console.log(customHistory);
 
             if (customHistory.length > 0) {
                 value = customHistory.pop();
@@ -92,20 +92,20 @@ const details = (_ => {
     }
 
     _public.remove = (element) => {
-        let textarea = $(element).find ("textarea")[0];
+        let textarea = $(element).find("textarea")[0];
         let value = textarea.value;
 
         if (value != "") {
-            customHistory.push (value);
+            customHistory.push(value);
         }
 
-        element.remove ();
+        element.remove();
 
-        $(".custom-markdown__textarea").each ((index, element) => {
-            $(element).attr ("id", `#custom-${index}`);
+        $(".custom-markdown__textarea").each((index, element) => {
+            $(element).attr("id", `#custom-${index}`);
         });
 
-        _public.update ();
+        _public.update();
     }
 
     return _public;
@@ -132,10 +132,10 @@ async function init() {
         switch (type) {
             case "all":
                 api.sendMessage('clear', type);
-                audio.cancel ();
+                audio.cancel();
                 break;
             case "sfx":
-                audio.cancel ();
+                audio.cancel();
                 break;
             default:
                 api.sendMessage('clear', type);
@@ -161,7 +161,7 @@ async function init() {
     });
 
     $(document).on('click', '.remove-markdown', event => {
-        details.remove ($(event.target).closest('.markdown-container'));
+        details.remove($(event.target).closest('.markdown-container'));
     });
 
     $(document).on('click', '.image-button', event => {
@@ -225,12 +225,11 @@ async function init() {
 
         for (let i = 0; i < files.sfx.length; i++) {
             const sfx = files.sfx[i];
-            const keymarker = i < 9 ? `(${i + 1}) ` : '';
 
             $('#sfx-buttons').append($.parseHTML(`
                 <button class="sfx-button" data-url="${sfx.url}">
                     <img class="play-icon" src="./assets/play.png">
-                    <p>${keymarker}${sfx.name}</p>
+                    <p>${sfx.name}</p>
                 </button>
             `));
         }
@@ -252,20 +251,20 @@ async function init() {
         previousText = JSON.parse(previousText);
 
         for (const [key, value] of Object.entries(previousText["current"])) {
-            let element = document.getElementById (key);
+            let element = document.getElementById(key);
 
             if (element == null) {
                 details.add({ key, value });
             }
 
-            element = document.getElementById (key);
+            element = document.getElementById(key);
 
             if (value != "") {
                 element.value = value;
             }
         }
 
-        details.loadHistory (previousText["history"]);
+        details.loadHistory(previousText["history"]);
     });
 
     // request media files

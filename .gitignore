@@ -130,3 +130,5 @@ dist
 .pnp.*
 
 *_media*
+
+*.rar
