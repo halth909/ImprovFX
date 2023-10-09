@@ -51,3 +51,8 @@ Feel free to fork the repo but please do not open pull requests - they will not 
 ## License
 
 This application is licensed under the [MIT License.](https://github.com/halth909/ImprovFX/blob/main/LICENSE.txt)
+
+## Attributions
+
+Malcolm Morrison - Concept, Design, and Testing
+Thomas Hall - Technical Design and Development
