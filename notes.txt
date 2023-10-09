@@ -1,8 +1,10 @@
-Undo button for accidentally removing text
+Rename to ImprovFX
 
-Remove buttons to top bar
+Create build
+Add to thomashall.dev
 
-Tabs renamed to "Video/Text" and "Image/SFX"
+Add MIT License
+Credit Malcolm and Tom
 
-Drop shadow on text
- - White text with black shadow
+Public Repo
+Add Readme

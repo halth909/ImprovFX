@@ -18,6 +18,11 @@ const windowDefaults = {
 
 let controlsWindow;
 
+if (process.platform === 'win32')
+{
+    app.setAppUserModelId(app.name);
+}
+
 app.whenReady().then(_ => {
     ipcMain.on('detailsUpdated', (event, details) => {
         showWindowManager.send('updateDetails', details);
