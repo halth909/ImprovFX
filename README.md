@@ -55,4 +55,5 @@ This application is licensed under the [MIT License.](https://github.com/halth90
 ## Attributions
 
 Malcolm Morrison - Concept, Design, and Testing
+
 Thomas Hall - Technical Design and Development
