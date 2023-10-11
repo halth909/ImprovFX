@@ -12,7 +12,7 @@ ImprovFX is a Show Control Application built using Electron, a framework for bui
 
 ## Download
 
-A Windows executable is available for download at https://thomashall.dev/
+A Windows executable is available for download at https://thomashall.dev/#download
 
 ## Installation
 
