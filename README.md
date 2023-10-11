@@ -10,6 +10,10 @@ ImprovFX is a Show Control Application built using Electron, a framework for bui
 - **Media folder:** Add media to the _media directory for ImprovFX to load on startup.
 - **Font loading:** Add fonts to the _media/fonts directory and change fonts in real time.
 
+## Download
+
+A Windows executable is available for download at https://thomashall.dev/
+
 ## Installation
 
 1. Clone the Repository:
