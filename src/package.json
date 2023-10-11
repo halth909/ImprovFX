@@ -1,18 +1,16 @@
 {
-    "name": "malcolm-app",
+    "name": "improv-fx",
     "version": "1.0.0",
-    "description": "Malcolm App",
+    "description": "ImprovFX",
     "main": "main.js",
     "scripts": {
         "start": "electron . --dev",
-        "package": "electron-packager .",
-        "make": "electron-forge make",
-        "publish": "electron-forge publish",
+        "package": "electron-packager . --out=../dist",
         "lint": "echo \"No linting configured\""
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/halth909/Malcolm-App.git"
+        "url": "git+https://github.com/halth909/ImprovFX.git"
     },
     "author": {
         "name": "Thomas Hall",
@@ -21,9 +19,9 @@
     },
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/halth909/Malcolm-App/issues"
+        "url": "https://github.com/halth909/ImprovFX/issues"
     },
-    "homepage": "https://github.com/halth909/Malcolm-App#readme",
+    "homepage": "https://github.com/halth909/ImprovFX#readme",
     "devDependencies": {
         "@electron-forge/cli": "^6.4.1",
         "@electron-forge/maker-deb": "^6.0.4",
