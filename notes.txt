@@ -1,10 +1,4 @@
-Rename to ImprovFX
-
 Create build
 Add to thomashall.dev
 
-Add MIT License
-Credit Malcolm and Tom
-
 Public Repo
-Add Readme

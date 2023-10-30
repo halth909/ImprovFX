@@ -111,6 +111,94 @@ const details = (_ => {
     return _public;
 })();
 
+const mediaButtons = (_ => {
+    let buttons = [];
+
+    let _public = {};
+
+    _public.setup = files => {
+        for (let i = 0; i < files.videos.length; i++) {
+            const video = files.videos[i];
+            console.log(video);
+            
+            let $element = $($.parseHTML(`
+                <div class="video-button media-button" data-url="${video.url}">
+                    <video class="media-preview" src="${video.url}#t=5"></video>
+                    <p>${video.name}</p>
+                </div>
+            `));
+
+            $('#video-buttons').append($element);
+
+            buttons.push({ 
+                $element: $element, 
+                searchTags: video.name.toLowerCase()
+            });
+        }
+
+        for (let i = 0; i < files.images.length; i++) {
+            const image = files.images[i];
+
+            let $element = $($.parseHTML(`
+                <div class="image-button media-button" data-url="${image.url}">
+                    <img class="media-preview" src="${image.url}">
+                    <p>${image.name}</p>
+                </div>
+            `));
+            
+            $('#image-buttons').append($element);
+
+            buttons.push({ 
+                $element: $element, 
+                searchTags: image.name.toLowerCase()
+            });
+        }
+
+        for (let i = 0; i < files.sfx.length; i++) {
+            const sfx = files.sfx[i];
+
+            let $element = $($.parseHTML(`
+                <button class="sfx-button" data-url="${sfx.url}">
+                    <img class="play-icon" src="./assets/play.png">
+                    <p>${sfx.name}</p>
+                </button>
+            `));
+
+            $('#sfx-buttons').append($element);
+            
+            buttons.push({ 
+                $element: $element, 
+                searchTags: sfx.name.toLowerCase()
+            });
+        }
+
+        for (let i = 0; i < files.fonts.length; i++) {
+            const font = files.fonts[i];
+
+            $('#font-select').append($.parseHTML(`
+                <option class="font-item" value="${encodeURI(font.url)}">
+                    ${font.name}
+                </options>
+            `));
+        }
+    }
+
+    _public.search = terms => {
+        terms = terms.toLowerCase().trim();
+        for (let i = 0; i < buttons.length; i++) {
+            console.log (buttons[i].$element);
+
+            if (terms == "" || buttons[i].searchTags.includes(terms)) {
+                buttons[i].$element.removeClass("hidden");
+            } else {
+                buttons[i].$element.addClass("hidden");
+            }
+        }
+    }
+
+    return _public;
+})();
+
 function hidePanels() {
     $('.panel-full').hide();
     $('.header-tab').removeClass('selected');
@@ -198,51 +286,13 @@ async function init() {
         details.update();
     });
 
+    $(document).on('keyup', '#header-search', _ => {
+        mediaButtons.search($('#header-search').val());
+    });
+
     // api events
     api.onListFiles((files) => {
-        for (let i = 0; i < files.videos.length; i++) {
-            const video = files.videos[i];
-            console.log(video);
-
-            $('#video-buttons').append($.parseHTML(`
-                <div class="video-button media-button" data-url="${video.url}">
-                    <video class="media-preview" src="${video.url}#t=5"></video>
-                    <p>${video.name}</p>
-                </div>
-            `));
-        }
-
-        for (let i = 0; i < files.images.length; i++) {
-            const image = files.images[i];
-
-            $('#image-buttons').append($.parseHTML(`
-                <div class="image-button media-button" data-url="${image.url}">
-                    <img class="media-preview" src="${image.url}">
-                    <p>${image.name}</p>
-                </div>
-            `));
-        }
-
-        for (let i = 0; i < files.sfx.length; i++) {
-            const sfx = files.sfx[i];
-
-            $('#sfx-buttons').append($.parseHTML(`
-                <button class="sfx-button" data-url="${sfx.url}">
-                    <img class="play-icon" src="./assets/play.png">
-                    <p>${sfx.name}</p>
-                </button>
-            `));
-        }
-
-        for (let i = 0; i < files.fonts.length; i++) {
-            const font = files.fonts[i];
-
-            $('#font-select').append($.parseHTML(`
-                <option class="font-item" value="${encodeURI(font.url)}">
-                    ${font.name}
-                </options>
-            `));
-        }
+        mediaButtons.setup (files);
     });
 
     api.onLoadPreviousText((previousText) => {
