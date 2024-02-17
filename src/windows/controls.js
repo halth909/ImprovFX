@@ -120,7 +120,7 @@ const mediaButtons = (_ => {
         for (let i = 0; i < files.videos.length; i++) {
             const video = files.videos[i];
             console.log(video);
-            
+
             let $element = $($.parseHTML(`
                 <div class="video-button media-button" data-url="${video.url}">
                     <video class="media-preview" src="${video.url}#t=5"></video>
@@ -130,8 +130,8 @@ const mediaButtons = (_ => {
 
             $('#video-buttons').append($element);
 
-            buttons.push({ 
-                $element: $element, 
+            buttons.push({
+                $element: $element,
                 searchTags: video.name.toLowerCase()
             });
         }
@@ -145,11 +145,11 @@ const mediaButtons = (_ => {
                     <p>${image.name}</p>
                 </div>
             `));
-            
+
             $('#image-buttons').append($element);
 
-            buttons.push({ 
-                $element: $element, 
+            buttons.push({
+                $element: $element,
                 searchTags: image.name.toLowerCase()
             });
         }
@@ -165,9 +165,9 @@ const mediaButtons = (_ => {
             `));
 
             $('#sfx-buttons').append($element);
-            
-            buttons.push({ 
-                $element: $element, 
+
+            buttons.push({
+                $element: $element,
                 searchTags: sfx.name.toLowerCase()
             });
         }
@@ -181,12 +181,14 @@ const mediaButtons = (_ => {
                 </options>
             `));
         }
+
+        api.sendMessage('fontSelected', $('.font-item').first().val());
     }
 
     _public.search = terms => {
         terms = terms.toLowerCase().trim();
         for (let i = 0; i < buttons.length; i++) {
-            console.log (buttons[i].$element);
+            console.log(buttons[i].$element);
 
             if (terms == "" || buttons[i].searchTags.includes(terms)) {
                 buttons[i].$element.removeClass("hidden");
@@ -264,7 +266,7 @@ async function init() {
 
     $(document).on('input', '#font-select', event => {
         api.sendMessage('fontSelected', $(event.currentTarget).val());
-    })
+    });
 
     // $(document).on('keydown', event => {
     //     const num = parseInt(event.key);
@@ -292,7 +294,7 @@ async function init() {
 
     // api events
     api.onListFiles((files) => {
-        mediaButtons.setup (files);
+        mediaButtons.setup(files);
     });
 
     api.onLoadPreviousText((previousText) => {
