@@ -46,6 +46,10 @@ app.whenReady().then(_ => {
         showWindowManager.send('useFont', fontPath);
     });
 
+    ipcMain.on('textScaleSet', (event, scale) => {
+        showWindowManager.send('scaleText', scale);
+    });
+
     ipcMain.on('clear', (event, type) => {
         showWindowManager.send('clear', type);
     });

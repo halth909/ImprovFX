@@ -227,6 +227,34 @@ function useFont(fontPath) {
     `);
 }
 
+function scaleText(scale) {
+    if ($('#scale-text').length == 0) {
+        $("head").append(`
+            <style id="scale-text"></style>
+        `);
+    }
+
+    let presets = [
+        ['h1', 16],
+        ['h2', 12],
+        ['h3', 10.4],
+        ['h4', 8],
+        ['h5', 6.4],
+        ['h6', 5.6],
+        ['p', 8],
+    ];
+
+    let rules = "";
+
+    for (let i in presets) {
+        let preset = presets[i];
+        let size = preset[1] * scale;
+        rules = `${rules}${preset[0]} { font-size: min(${size}vw, ${size}vh); }`;
+    }
+
+    $('#scale-text').html(rules);
+}
+
 function clear(type) {
     console.log(`clearing ${type}`);
 
@@ -248,6 +276,7 @@ async function init() {
     api.onPlayVideo(playVideo);
     api.onShowText(showText);
     api.onUseFont(useFont);
+    api.onScaleText(scaleText);
     api.onClear(clear);
 
     api.sendMessage('getConfig');

@@ -238,6 +238,14 @@ async function init() {
         api.sendMessage('playVideo', $(event.currentTarget).attr('data-url'));
     });
 
+    $(document).on('input', '#text-size', event => {
+        let x = $('#text-size').val();
+        let exp = 5 + 0.05 * x + 0.001 * x * x;
+        let val = exp / 10;
+        $('#text-size-value').html(Math.round(exp) / 10);
+        api.sendMessage('textScaleSet', val);
+    });
+
     $(document).on('click', '.markdown-show', event => {
         let siblings = $(event.target).parent().siblings();
         siblings.each((index, sibling) => {

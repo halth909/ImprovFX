@@ -192,6 +192,17 @@ img.play-icon {
     flex-direction: column;
 }
 
+.slider-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+#text-size-value {
+    width: 16px;
+}
+
 .hidden {
     display: none;
 }

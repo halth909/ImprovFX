@@ -30,6 +30,10 @@ contextBridge.exposeInMainWorld('api', {
         ipcRenderer.on("useFont", (event, ...args) => callback(...args));
     },
 
+    onScaleText: (callback) => {
+        ipcRenderer.on("scaleText", (event, ...args) => callback(...args));
+    },
+
     // clear all
     onClear: (callback) => {
         ipcRenderer.on("clear", (event, ...args) => callback(...args));
