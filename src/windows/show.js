@@ -255,6 +255,10 @@ function transitionToVideo({ videoPath }) {
         await show({ typeList: ['video'] });
 
         $('.video-item').on('timeupdate', event => {
+            if (settings.get('video_loop')) {
+                return;
+            }
+
             let current = event.target.currentTime;
 
             if (isNaN(current)) {
