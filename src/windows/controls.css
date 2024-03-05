@@ -69,13 +69,17 @@ button:hover {
 }
 
 #header-tabs {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
     height: 32px;
+    padding-top: 8px;
 }
 
 button.header-tab {
+    flex: 1 0 100px;
     height: 24px;
-    padding: 0 30px;
-    margin: 8px 0 0 0;
     background-color: var(--color-blue);
     border-radius: 8px 8px 0 0;
     border: none;
@@ -90,11 +94,14 @@ button.header-tab.selected {
 }
 
 #header-search {
+    flex-basis: 50px;
+    flex-grow: 1;
     height: 24px;
     margin: 4px;
 }
 
 #header-clear__buttons {
+    flex-shrink: 0;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -192,7 +199,7 @@ img.play-icon {
     flex-direction: column;
 }
 
-.slider-container {
+.checkbox-container, .slider-container {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -201,6 +208,18 @@ img.play-icon {
 
 #text-size-value {
     width: 16px;
+}
+
+#image-panel {
+    flex: 1 1 100%;
+}
+
+.settings-label {
+    width: 100px;
+}
+
+.settings-value {
+    width: 50px;
 }
 
 .hidden {

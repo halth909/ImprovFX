@@ -12,6 +12,10 @@ contextBridge.exposeInMainWorld('api', {
         ipcRenderer.on("loadPreviousText", (event, ...args) => callback(...args));
     },
 
+    onUpdateSettings: (callback) => {
+        ipcRenderer.on("updateSettings", (event, ...args) => callback(...args));
+    },
+
     // show text api 
     onShowText: (callback) => {
         ipcRenderer.on("showText", (event, ...args) => callback(...args));
@@ -24,6 +28,10 @@ contextBridge.exposeInMainWorld('api', {
 
     onPlayVideo: (callback) => {
         ipcRenderer.on("playVideo", (event, ...args) => callback(...args));
+    },
+
+    onLoopVideo: (callback) => {
+        ipcRenderer.on("loopVideo", (event, ...args) => callback(...args));
     },
 
     onUseFont: (callback) => {

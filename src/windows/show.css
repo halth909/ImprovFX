@@ -1,5 +1,5 @@
 :root {
-    --transition-duration: 500ms;
+    --transition-duration: 1000ms;
 }
 
 * {
@@ -64,7 +64,7 @@ p {
     z-index: 1;
 }
 
-.media-item {
+.image-item, .video-item {
     position: fixed;
     top: 0px;
     left: 0px;
@@ -87,11 +87,32 @@ p {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    z-index: 1;
     text-shadow: 1px 1px 4px black, -1px 1px 4px black, 1px -1px 4px black, -1px -1px 4px black;
 }
 
-.animated {
-    transition: opacity var(--transition-duration) linear;
+img.animated {
+    transition: opacity var(--image-in) linear;
+}
+
+img.animated.hidden {
+    transition: opacity var(--image-out) linear;
+}
+
+.text-item.animated {
+    transition: opacity var(--text-in) linear;
+}
+
+.text-item.animated.hidden {
+    transition: opacity var(--text-out) linear;
+}
+
+video.animated {
+    transition: opacity var(--video-in) linear;
+}
+
+video.animated.hidden {
+    transition: opacity var(--video-out) linear;
 }
 
 .hidden {

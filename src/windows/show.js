@@ -1,5 +1,3 @@
-const transitionDuration = 1000; // milliseconds
-
 const milliseconds = (milliseconds) => {
     return new Promise(async(resolve) => {
         setTimeout(_ => {
@@ -15,6 +13,112 @@ const animationFrame = _ => {
         });
     })
 }
+
+const settings = (_ => {
+    let values = { 
+        default_fade: 1000, // milliseconds
+        video_loop: false
+    };
+
+    let _public = {};
+
+    _public.set = new_values => {
+        values = {
+            ...values,
+            ...new_values
+        };
+
+        if ($('#transitions-properties').length == 0) {
+            $("head").append(`
+                <style id="transitions-properties"></style>
+            `);
+        }
+    
+        $('#transitions-properties').html(`
+            :root {
+                --image-in: ${values.image_in}ms;
+                --image-out: ${values.image_out}ms;
+                --text-in: ${values.text_in}ms;
+                --text-out: ${values.text_out}ms;
+                --video-in: ${values.video_in}ms;
+                --video-out: ${values.video_out}ms;
+            }
+        `);
+    }
+
+    _public.get = query => {
+        if (query in values) {
+            return values[query];
+        }
+
+        let map = {
+
+        };
+    
+        if (query in map) {
+            let key = map[query];
+            if (key in values) {
+                return values[key];
+            }
+        }
+
+        return values.default_fade;
+    }; 
+
+    return _public;
+})();
+
+const types = (_ => {
+    let _public = {};
+
+    _public.toQuery = list => {
+        let map = {
+            'image': 'img',
+            'text': '.text-item',
+            'video': 'video'
+        }
+
+        let queryParts = [];
+
+        for (let item of list) {
+            console.log (item);
+            if (item in map) {
+                console.log('in map');
+                queryParts.push (map[item]);
+            }
+        }
+
+        return queryParts.join(", ");
+    };
+
+    _public.inDuration = list => {
+        return durationFromList({
+            list, suffix: "in"
+        });
+    };
+
+    _public.outDuration = list => {
+        return durationFromList({
+            list, suffix: "out"
+        });
+    };
+
+    function durationFromList({ list, suffix }) {
+        if (list.length == 0) {
+            return settings.get('default_fade');
+        }
+
+        let max = 0;
+
+        for (let item of list) {
+            max = Math.max(max, settings.get(`${item}_${suffix}`));
+        }
+
+        return max;
+    }
+
+    return _public;
+})();
 
 let actionHandlerFactory = {
     fabricate: _ => {
@@ -55,9 +159,12 @@ let actionHandlerFactory = {
     }
 }
 
-function hide({ query, instant = false }) {
+function hide({ typeList }) {
+    let query = types.toQuery(typeList);
+    let transitionDuration = types.outDuration(typeList);
+
     return new Promise(async resolve => {
-        if (instant) {
+        if (transitionDuration == 0) {
             $(query).remove();
             return resolve();
         }
@@ -65,8 +172,9 @@ function hide({ query, instant = false }) {
         $(query).addClass('animated');
         $(query).addClass('hidden');
 
+        // don't fade if no items exist
         if ($(query).length > 0) {
-            await milliseconds(transitionDuration / 2);
+            await milliseconds(transitionDuration);
         }
 
         $(query).remove();
@@ -75,9 +183,19 @@ function hide({ query, instant = false }) {
     });
 }
 
-function show({ query, instant = false }) {
+function hideAll() {
     return new Promise(async resolve => {
-        if (instant) {
+        await hide({ typeList: ['image', 'video', 'text'] });
+        resolve();
+    });
+}
+
+function show({ typeList }) {
+    let query = types.toQuery(typeList);
+    let transitionDuration = types.inDuration(typeList);
+
+    return new Promise(async resolve => {
+        if (transitionDuration == 0) {
             $(query).removeClass('hidden');
             return resolve();
         }
@@ -86,10 +204,9 @@ function show({ query, instant = false }) {
         await animationFrame();
 
         $(query).addClass('animated');
-
         $(query).removeClass('hidden');
 
-        await milliseconds(transitionDuration / 2);
+        await milliseconds(transitionDuration);
 
         resolve();
     });
@@ -98,61 +215,62 @@ function show({ query, instant = false }) {
 function transitionToImage({ imagePath }) {
     return new Promise(async resolve => {
         if (imagePath == null) {
-            await hide({ query: 'img' });
+            await hide({ typeList: ['image'] });
             return resolve();
         }
 
-        await hide({ query: '.media-item, .text-item' });
+        await hide({ typeList: ['image', 'video'] });
 
         $('body').append($.parseHTML(`
-            <img class="media-item hidden" src="${imagePath}">
+            <img class="image-item hidden" src="${imagePath}">
         `));
 
-        await show({ query: '.media-item' });
+        await show({ typeList: ['image'] });
 
         resolve();
     });
 }
 
-function transitionToVideo({ videoPath, instant = true }) {
+function transitionToVideo({ videoPath }) {
     return new Promise(async resolve => {
         if (videoPath == null) {
-            await hide({ query: 'video', instant });
+            await hide({ typeList: ['video'] });
             return resolve();
         }
 
-        await hide({ query: '.media-item, .text-item' });
+        await hide({ typeList: ['image', 'video'] });
 
         $('body').append($.parseHTML(`
-            <video class="media-item hidden" src="${videoPath}" autoplay>
+            <video class="video-item hidden" src="${videoPath}" autoplay>
         `));
 
-        await show({
-            query: '.media-item',
-            instant
-        });
+        if (settings.get('video_loop')) {
+            $('video').attr('loop', 'loop');
+        }
+        
+        else {
+            $('video').removeAttr('loop');
+        }
+        
+        await show({ typeList: ['video'] });
 
-        $('.media-item').on('timeupdate', event => {
+        $('.video-item').on('timeupdate', event => {
             let current = event.target.currentTime;
 
             if (isNaN(current)) {
                 return;
             }
 
-            let target = event.target.duration;
+            let transitionDuration = types.outDuration(['video']);
+            let target = event.target.duration - transitionDuration / 1000;
 
-            if (instant) {
-                target -= transitionDuration / 2000;
-            }
+            console.log (`${current} ${target}`);
 
             if (isNaN(target) || current < target) {
                 return;
             }
 
-            hide({
-                query: '.media-item',
-                instant: true
-            });
+            hide({ typeList: ['video'] });
         });
 
         resolve();
@@ -161,7 +279,7 @@ function transitionToVideo({ videoPath, instant = true }) {
 
 function transitionToText({ html }) {
     return new Promise(async resolve => {
-        await hide({ query: '.text-item' });
+        await hide({ typeList: ['text'] });
 
         if (html == null) {
             return resolve();
@@ -173,7 +291,7 @@ function transitionToText({ html }) {
             </div>
         `));
 
-        await show({ query: '.text-item' });
+        await show({ typeList: ['text'] });
 
         resolve();
     });
@@ -181,6 +299,10 @@ function transitionToText({ html }) {
 
 const backgroundActionHandler = actionHandlerFactory.fabricate();
 const foregroundActionHandler = actionHandlerFactory.fabricate();
+
+function updateSettings(payload) {
+    settings.set(payload);
+}
 
 function showImage(imagePath) {
     console.log('showing image');
@@ -191,14 +313,13 @@ function showImage(imagePath) {
     });
 };
 
-function playVideo(videoPath, instant = true) {
+function playVideo(videoPath) {
     console.log('playing video');
 
     backgroundActionHandler.addAction({
         action: transitionToVideo,
         options: {
-            videoPath,
-            instant
+            videoPath
         }
     });
 }
@@ -213,6 +334,20 @@ function showText(md) {
         action: transitionToText,
         options: { html }
     });
+}
+
+function loopVideo(loop) {
+    console.log (loop);
+
+    if (loop) {
+        $('video').attr('loop', 'loop');
+    }
+    
+    else {
+        $('video').removeAttr('loop');
+    }
+
+    settings.set({ 'video_loop': loop });
 }
 
 function useFont(fontPath) {
@@ -272,9 +407,11 @@ function clear(type) {
 }
 
 async function init() {
+    api.onUpdateSettings(updateSettings);
     api.onShowImage(showImage);
     api.onPlayVideo(playVideo);
     api.onShowText(showText);
+    api.onLoopVideo(loopVideo);
     api.onUseFont(useFont);
     api.onScaleText(scaleText);
     api.onClear(clear);

@@ -21,6 +21,7 @@
             <!-- <button id="button-settings" data-panel="settings" class="header-tab selected">Settings</button> -->
             <button id="button-details" data-panel="details" class="header-tab">Video / Text</button>
             <button id="button-controls" data-panel="controls" class="header-tab">Image / SFX</button>
+            <button id="button-settings" data-panel="settings" class="header-tab">Settings</button>
         </div>
         <div id="header-clear__buttons">
             <p id="header-clear__label">Clear:</p>
@@ -36,6 +37,10 @@
     <div id="panel-details" class="panel-full">
         <div class="section-header">
             <h2>Videos</h2>
+            <div class="checkbox-container">
+                <input type="checkbox" id="video-loop">
+                <label for="video-loop">Loop</label>
+            </div>
         </div>
         <div id="video-buttons" class="media-buttons-container"></div>
 
@@ -91,6 +96,9 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div id="panel-settings" class="panel-full">
     </div>
 </body>
 

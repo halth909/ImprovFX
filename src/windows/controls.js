@@ -1,4 +1,53 @@
-const audioCancelDuration = 1000;
+const settings = (_ => {
+    let min = 0;
+    let max = 5000;
+
+    let defaults = {
+        audio_in: 0,
+        audio_out: 1000,
+        image_in: 500,
+        image_out: 500,
+        text_in: 500,
+        text_out: 500,
+        video_in: 500,
+        video_out: 500
+    };
+
+    let _public = {};
+
+    _public.values = {
+        ...defaults
+    };
+
+    _public.init = _ => {
+        $("#panel-settings").append(`<h2>Fade</h2>`);
+
+        for (let key in defaults) {
+            let id = key.replace("_", "-");
+            let label = key.charAt(0).toUpperCase() + key.replace("_", " ").slice(1);
+            let val = defaults[key];
+    
+            api.sendMessage('settingsChanged', _public.values);
+    
+            $("#panel-settings").append(`
+                <div class="slider-container">
+                    <label class="settings-label" for="${id}">${label}</label>
+                    <input type="range" min="${min}" max="${max}" value="${val}" class="slider" id="${id}">
+                    <p class="settings-value" id="${id}-value">${val}ms</p>
+                </div>
+            `);
+
+            $(document).on('input', `#${id}`, event => {
+                let value = parseInt($(`#${id}`).val());
+                _public.values[key] = value;
+                $(`#${id}-value`).html(`${value}ms`);
+                api.sendMessage('settingsChanged', _public.values);
+            });
+        }
+    }
+
+    return _public;
+})();
 
 const audio = (_ => {
     let player = null;
@@ -17,6 +66,10 @@ const audio = (_ => {
 
         player = new Howl({ src });
         player.play();
+
+        if (settings.values.audio_in > 0) {
+            player.fade(0, 1, settings.values.audio_in);
+        }
     }
 
     _public.cancel = _ => {
@@ -25,7 +78,7 @@ const audio = (_ => {
             return;
         }
 
-        player.fade(1, 0, audioCancelDuration);
+        player.fade(1, 0, settings.values.audio_out);
 
         cancelTimeoutId = setTimeout(_ => {
             if (player) {
@@ -272,6 +325,11 @@ async function init() {
         audio.play(src);
     });
 
+    $(document).on('input', '#video-loop', event => {
+        console.log(event);
+        api.sendMessage('videoLoop', event.currentTarget.checked);
+    });
+
     $(document).on('input', '#font-select', event => {
         api.sendMessage('fontSelected', $(event.currentTarget).val());
     });
@@ -329,6 +387,9 @@ async function init() {
 
     // request media files
     api.sendMessage('getFiles');
+
+    settings.init();
+
     document.getElementsByClassName('header-tab')[0].click();
 }
 

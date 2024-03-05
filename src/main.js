@@ -24,6 +24,11 @@ if (process.platform === 'win32')
 }
 
 app.whenReady().then(_ => {
+    ipcMain.on('settingsChanged', (event, details) => {
+        showWindowManager.send('updateSettings', details);
+        console.log(details);
+    });
+
     ipcMain.on('detailsUpdated', (event, details) => {
         showWindowManager.send('updateDetails', details);
         console.log(details);
@@ -40,6 +45,10 @@ app.whenReady().then(_ => {
 
     ipcMain.on('showText', (event, md) => {
         showWindowManager.send('showText', md);
+    });
+
+    ipcMain.on('videoLoop', (event, loop) => {
+        showWindowManager.send('loopVideo', loop);
     });
 
     ipcMain.on('fontSelected', (event, fontPath) => {
