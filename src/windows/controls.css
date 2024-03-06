@@ -1,20 +1,18 @@
 :root {
     /** CSS DARK THEME PRIMARY COLORS */
-    --color-primary-100:  #318500;
-    --color-primary-200:  #4d922a;
-    --color-primary-300:  #65a046;
-    --color-primary-400:  #7bad60;
-    --color-primary-500:  #92bb7a;
-    --color-primary-600:  #a7c894;
-    
+    --color-primary-100: #318500;
+    --color-primary-200: #4d922a;
+    --color-primary-300: #65a046;
+    --color-primary-400: #7bad60;
+    --color-primary-500: #92bb7a;
+    --color-primary-600: #a7c894;
     /** CSS DARK THEME SURFACE COLORS */
-    --color-surface-100:  #121212;
-    --color-surface-200:  #282828;
-    --color-surface-300:  #3f3f3f;
-    --color-surface-400:  #575757;
-    --color-surface-500:  #717171;
-    --color-surface-600:  #8b8b8b;          
-
+    --color-surface-100: #121212;
+    --color-surface-200: #282828;
+    --color-surface-300: #3f3f3f;
+    --color-surface-400: #575757;
+    --color-surface-500: #717171;
+    --color-surface-600: #8b8b8b;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -24,6 +22,35 @@
     margin: 0;
     box-sizing: border-box;
     color: white;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+    height: 0px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+
+/* Track */
+
+ ::-webkit-scrollbar-track {
+    background: #ffffff03;
+}
+
+
+/* Handle */
+
+ ::-webkit-scrollbar-thumb {
+    background: #ffffff3F;
+    border-radius: 4px;
+}
+
+
+/* Handle on hover */
+
+ ::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 html {
@@ -212,7 +239,7 @@ img.play-icon {
 
 .media-wrapper {
     height: 100%;
-    padding: 8px 16px 8px 8px;
+    padding: 8px;
     border-radius: 8px;
     background-color: var(--color-surface-200);
     overflow: scroll;
@@ -265,7 +292,8 @@ img.play-icon {
     flex-direction: column;
 }
 
-.checkbox-container, .slider-container {
+.checkbox-container,
+.slider-container {
     display: flex;
     flex-direction: row;
     align-items: center;
