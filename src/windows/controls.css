@@ -81,7 +81,7 @@ button {
 }
 
 button:hover {
-    background-color: transparent;
+    border-color: var(--color-primary-500);
 }
 
 #header {
@@ -285,7 +285,8 @@ img.play-icon {
 }
 
 .settings-value {
-    width: 50px;
+    width: 60px;
+    text-align: right;
 }
 
 .hidden {
