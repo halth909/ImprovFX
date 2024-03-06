@@ -51,6 +51,9 @@ const audio = (_ => {
     let player = null;
     let cancelTimeoutId = null;
 
+    let progressTimeoutId = null;
+    let maxProgress = 0;
+
     let _public = {};
 
     _public.play = src => {
@@ -68,6 +71,8 @@ const audio = (_ => {
         if (settings.values.audio_in > 0) {
             player.fade(0, 1, settings.values.audio_in);
         }
+
+        trackProgress();
     }
 
     _public.cancel = _ => {
@@ -82,7 +87,46 @@ const audio = (_ => {
             if (player) {
                 player.stop();
             }
-        }, 5000);
+        }, settings.values.audio_out);
+    }
+
+    function trackProgress() {
+        if (progressTimeoutId != null) {
+            clearTimeout(progressTimeoutId);
+        }
+
+        maxProgress = 0;
+        updateProgress();
+    }
+
+    function updateProgress() {
+        if ($('#audio-progress').length == 0) {
+            $("head").append(`
+                <style id="audio-progress"></style>
+            `);
+        }
+
+        let audioTime = player.seek();
+        let progress = 100 * audioTime / player.duration();
+        audioTime = Math.floor(audioTime);
+    
+        $('#audio-progress').html(`
+            :root {
+                --audio-progress: ${progress}%;
+                --audio-time: "${JSON.stringify(audioTime)}";
+            }
+        `);
+
+        maxProgress = isNaN(progress) ? maxProgress : Math.max(progress, maxProgress);
+        console.log (`${progress} ${maxProgress}`);
+
+        if (isNaN(progress) || maxProgress == 0 || progress != 0 ) {
+            progressTimeoutId = requestAnimationFrame(updateProgress);
+        }
+
+        else {
+            $('.sfx-button').removeClass('playing');
+        }
     }
 
     return _public;
@@ -211,7 +255,8 @@ const mediaButtons = (_ => {
             let $element = $($.parseHTML(`
                 <button class="sfx-button" data-url="${sfx.url}">
                     <img class="play-icon" src="./assets/play.png">
-                    <p>${sfx.name}</p>
+                    <p class="sfx-label">${sfx.name}</p>
+                    <div class="sfx-progress"></div>
                 </button>
             `));
 
@@ -319,6 +364,8 @@ async function init() {
     });
 
     $(document).on('click', '.sfx-button', event => {
+        $('.sfx-button').removeClass('playing');
+        $(event.currentTarget).addClass('playing');
         const src = $(event.currentTarget).attr('data-url');
         audio.play(src);
     });
