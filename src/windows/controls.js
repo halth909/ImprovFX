@@ -20,8 +20,6 @@ const settings = (_ => {
     };
 
     _public.init = _ => {
-        $("#panel-settings").append(`<h2>Fade</h2>`);
-
         for (let key in defaults) {
             let id = key.replace("_", "-");
             let label = key.charAt(0).toUpperCase() + key.replace("_", " ").slice(1);
@@ -29,7 +27,7 @@ const settings = (_ => {
     
             api.sendMessage('settingsChanged', _public.values);
     
-            $("#panel-settings").append(`
+            $("#fade-panel").append(`
                 <div class="slider-container">
                     <label class="settings-label" for="${id}">${label}</label>
                     <input type="range" min="${min}" max="${max}" value="${val}" class="slider" id="${id}">
