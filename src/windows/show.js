@@ -128,28 +128,33 @@ const videoFadeHandler = (_ => {
 
     let time = -1;
     let interval = null;
-    let timeout = null;
-
-    let duration = -1;
 
     let maxTime = -1;
     let volume = 0.0;
 
+    let clearing = false;
+
     let _public = {};
 
     _public.reset = _ => {
+        console.log ("RESETTING");
+
         time = 0.0;
-        duration = -1;
         maxTime = -1;
         volume = 0.0;
+
+        clearing = false;
 
         clearTimers();
         interval = setInterval(intervalUpdate, increment);
     }
 
     _public.update = target => {
+        if (clearing) {
+            return;
+        }
+
         time = target.currentTime;
-        duration = target.duration;
 
         if (time > maxTime) {
             maxTime = time;
@@ -158,9 +163,37 @@ const videoFadeHandler = (_ => {
         volumeUpdate();
     }
 
-    _public.clear = (duration) => {
+    _public.clear = async (duration) => {
+        console.log ("CLEARING");
+
+        clearing = true;
         clearTimers();
-        timeout = setTimeout(timeoutFade(duration), increment);
+        let scale = volume;
+        let remaining = duration;
+
+        return new Promise(async resolve => {
+            while (volume > 0.0) {
+                if ($('video').length == 0) {
+                    break;
+                }
+    
+                console.log (`${increment} ${remaining}`);
+    
+                $('video')[0].volume = volume;
+                console.log (`Volume fade:   ${volume}`);
+    
+                volume -= (scale * increment / remaining);
+                remaining -= increment;
+    
+                await milliseconds(increment);
+            }
+
+            return resolve();
+        });
+    }
+
+    _public.isClearing = _ => {
+        return clearing;
     }
 
     function intervalUpdate() {
@@ -174,54 +207,27 @@ const videoFadeHandler = (_ => {
         volumeUpdate();
     }
 
-    function timeoutFade(remaining) {
-        volume -= (increment / remaining);
-
-        if (volume < 0) {
-            return;
-        }
-
-        $('video')[0].volume = volume;
-        console.log (`Volume fade: ${volume}`);
-
-        setTimeout(timeoutFade(remaining - 10), increment);
-    }
-
     function volumeUpdate() {
         if (time > maxTime) {
             maxTime = time;
         }
 
-        // calculate fade in and out volumes
-        let fadeInVolume = saturate(1000 * time / settings.get("video_in"));
-        let fadeOutVolume = saturate(1000 * (duration - time) / settings.get("video_out"));
-
-        if (isNaN(fadeOutVolume)) {
-            return;
-        }
+        volume = saturate(1000 * time / settings.get("video_in"));
 
         if (settings.get("video_loop")) {
             if (time < maxTime) {
-                fadeInVolume = 1.0;
+                volume = 1.0;
             }
-
-            fadeOutVolume = 1.0;
         }
 
-        volume = Math.min(fadeInVolume, fadeOutVolume);
-
         $('video')[0].volume = volume;
+        console.log (`Volume update: ${volume}`);
     }
 
     function clearTimers() {
         if (interval != null) {
             clearInterval(interval);
             interval = null;
-        }
-
-        if (timeout != null) {
-            clearTimeout(timeout);
-            timeout = null;
         }
     }
 
@@ -284,11 +290,13 @@ function hide({ typeList }) {
         if ($(query).length > 0) {
 
             // if video is faded out, fade out audio of player
-            if (typeList.includes('video')) {
-                videoFadeHandler.clear(transitionDuration);
+            if (typeList.includes('video') && !videoFadeHandler.isClearing()) {
+                await videoFadeHandler.clear(transitionDuration);
             }
 
-            await milliseconds(transitionDuration);
+            else {
+                await milliseconds(transitionDuration);
+            }
         }
 
         $(query).remove();
