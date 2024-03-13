@@ -1,3 +1,7 @@
+const saturate = (value) => {
+    return Math.max(0, Math.min(value, 1));
+}
+
 const milliseconds = (milliseconds) => {
     return new Promise(async(resolve) => {
         setTimeout(_ => {
@@ -83,7 +87,6 @@ const types = (_ => {
         for (let item of list) {
             console.log (item);
             if (item in map) {
-                console.log('in map');
                 queryParts.push (map[item]);
             }
         }
@@ -115,6 +118,111 @@ const types = (_ => {
         }
 
         return max;
+    }
+
+    return _public;
+})();
+
+const videoFadeHandler = (_ => {
+    let increment = 50; // ms
+
+    let time = -1;
+    let interval = null;
+    let timeout = null;
+
+    let duration = -1;
+
+    let maxTime = -1;
+    let volume = 0.0;
+
+    let _public = {};
+
+    _public.reset = _ => {
+        time = 0.0;
+        duration = -1;
+        maxTime = -1;
+        volume = 0.0;
+
+        clearTimers();
+        interval = setInterval(intervalUpdate, increment);
+    }
+
+    _public.update = target => {
+        time = target.currentTime;
+        duration = target.duration;
+
+        if (time > maxTime) {
+            maxTime = time;
+        }
+
+        volumeUpdate();
+    }
+
+    _public.clear = (duration) => {
+        clearTimers();
+        timeout = setTimeout(timeoutFade(duration), increment);
+    }
+
+    function intervalUpdate() {
+        if ($('video').length == 0) {
+            clearInterval(interval);
+            interval = null;
+            return;
+        }
+
+        time += increment / 1000;
+        volumeUpdate();
+    }
+
+    function timeoutFade(remaining) {
+        volume -= (increment / remaining);
+
+        if (volume < 0) {
+            return;
+        }
+
+        $('video')[0].volume = volume;
+        console.log (`Volume fade: ${volume}`);
+
+        setTimeout(timeoutFade(remaining - 10), increment);
+    }
+
+    function volumeUpdate() {
+        if (time > maxTime) {
+            maxTime = time;
+        }
+
+        // calculate fade in and out volumes
+        let fadeInVolume = saturate(1000 * time / settings.get("video_in"));
+        let fadeOutVolume = saturate(1000 * (duration - time) / settings.get("video_out"));
+
+        if (isNaN(fadeOutVolume)) {
+            return;
+        }
+
+        if (settings.get("video_loop")) {
+            if (time < maxTime) {
+                fadeInVolume = 1.0;
+            }
+
+            fadeOutVolume = 1.0;
+        }
+
+        volume = Math.min(fadeInVolume, fadeOutVolume);
+
+        $('video')[0].volume = volume;
+    }
+
+    function clearTimers() {
+        if (interval != null) {
+            clearInterval(interval);
+            interval = null;
+        }
+
+        if (timeout != null) {
+            clearTimeout(timeout);
+            timeout = null;
+        }
     }
 
     return _public;
@@ -174,6 +282,12 @@ function hide({ typeList }) {
 
         // don't fade if no items exist
         if ($(query).length > 0) {
+
+            // if video is faded out, fade out audio of player
+            if (typeList.includes('video')) {
+                videoFadeHandler.clear(transitionDuration);
+            }
+
             await milliseconds(transitionDuration);
         }
 
@@ -251,15 +365,19 @@ function transitionToVideo({ videoPath }) {
         else {
             $('video').removeAttr('loop');
         }
-        
-        await show({ typeList: ['video'] });
 
+        $('video')[0].volume = 0.0;
+
+        videoFadeHandler.reset();
+        
         $('.video-item').on('timeupdate', event => {
+            let current = event.target.currentTime;
+
+            videoFadeHandler.update(event.target);
+
             if (settings.get('video_loop')) {
                 return;
             }
-
-            let current = event.target.currentTime;
 
             if (isNaN(current)) {
                 return;
@@ -268,7 +386,7 @@ function transitionToVideo({ videoPath }) {
             let transitionDuration = types.outDuration(['video']);
             let target = event.target.duration - transitionDuration / 1000;
 
-            console.log (`${current} ${target}`);
+            // console.log (`${current} ${target}`);
 
             if (isNaN(target) || current < target) {
                 return;
@@ -276,6 +394,8 @@ function transitionToVideo({ videoPath }) {
 
             hide({ typeList: ['video'] });
         });
+
+        await show({ typeList: ['video'] });
 
         resolve();
     });
@@ -398,13 +518,13 @@ function clear(type) {
     console.log(`clearing ${type}`);
 
     if (type == 'video') {
-        playVideo(null, false);
+        playVideo(null);
     } else if (type == 'text') {
         showText();
     } else if (type == 'image') {
         showImage();
     } else {
-        playVideo(null, false);
+        playVideo(null);
         showText();
         showImage();
     }
