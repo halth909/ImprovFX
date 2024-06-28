@@ -18,8 +18,7 @@ const windowDefaults = {
 
 let controlsWindow;
 
-if (process.platform === 'win32')
-{
+if (process.platform === 'win32') {
     app.setAppUserModelId(app.name);
 }
 
@@ -113,6 +112,10 @@ app.whenReady().then(_ => {
         }
     });
 
+    ipcMain.on('fullscreen', (event, fullscreen) => {
+        showWindowManager.fullscreen(fullscreen);
+    });
+
     controlsWindow = new BrowserWindow({
         ...windowDefaults,
         x: 0
@@ -121,6 +124,10 @@ app.whenReady().then(_ => {
     controlsWindow.loadFile('windows/controls.html');
 
     showWindowManager.init();
+
+    controlsWindow.on('close', _ => {
+        showWindowManager.close();
+    });
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
@@ -144,18 +151,34 @@ const showWindowManager = (() => {
         showWindow = new BrowserWindow({
             ...windowDefaults,
             x: windowDefaults.width,
-            //titleBarOverlay: true
+            frame: false,
+            resizable: true,
         });
 
         showWindow.loadFile('windows/show.html');
-        //showWindow.setMenu(null);
-        //showWindow.setMenuBarVisibility(false);
-    }
+    };
 
     let send = (id, content) => {
         init();
         showWindow.webContents.send(id, content);
-    }
+    };
 
-    return { init, send };
+    let fullscreen = _ => {
+        // unmaximise
+        if (showWindow.fullScreen) {
+            showWindow.setFullScreen(false);
+        }
+
+        // maximise
+        else {
+            showWindow.setFullScreen(true);
+        }
+    };
+
+    let close = _ => {
+        console.log("closing!");
+        showWindow.close();
+    };
+
+    return { init, send, fullscreen, close };
 })();

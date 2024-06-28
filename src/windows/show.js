@@ -19,7 +19,7 @@ const animationFrame = _ => {
 }
 
 const settings = (_ => {
-    let values = { 
+    let values = {
         default_fade: 1000, // milliseconds
         video_loop: false
     };
@@ -37,7 +37,7 @@ const settings = (_ => {
                 <style id="transitions-properties"></style>
             `);
         }
-    
+
         $('#transitions-properties').html(`
             :root {
                 --image-in: ${values.image_in}ms;
@@ -58,7 +58,7 @@ const settings = (_ => {
         let map = {
 
         };
-    
+
         if (query in map) {
             let key = map[query];
             if (key in values) {
@@ -67,7 +67,7 @@ const settings = (_ => {
         }
 
         return values.default_fade;
-    }; 
+    };
 
     return _public;
 })();
@@ -77,17 +77,17 @@ const types = (_ => {
 
     _public.toQuery = list => {
         let map = {
-            'image': 'img',
+            'image': '.image-item',
             'text': '.text-item',
-            'video': 'video'
+            'video': '.video-item'
         }
 
         let queryParts = [];
 
         for (let item of list) {
-            console.log (item);
+            console.log(item);
             if (item in map) {
-                queryParts.push (map[item]);
+                queryParts.push(map[item]);
             }
         }
 
@@ -96,13 +96,15 @@ const types = (_ => {
 
     _public.inDuration = list => {
         return durationFromList({
-            list, suffix: "in"
+            list,
+            suffix: "in"
         });
     };
 
     _public.outDuration = list => {
         return durationFromList({
-            list, suffix: "out"
+            list,
+            suffix: "out"
         });
     };
 
@@ -137,7 +139,7 @@ const videoFadeHandler = (_ => {
     let _public = {};
 
     _public.reset = _ => {
-        console.log ("RESETTING");
+        console.log("RESETTING");
 
         time = 0.0;
         maxTime = -1;
@@ -163,8 +165,8 @@ const videoFadeHandler = (_ => {
         volumeUpdate();
     }
 
-    _public.clear = async (duration) => {
-        console.log ("CLEARING");
+    _public.clear = async(duration) => {
+        console.log("CLEARING");
 
         clearing = true;
         clearTimers();
@@ -176,15 +178,15 @@ const videoFadeHandler = (_ => {
                 if ($('video').length == 0) {
                     break;
                 }
-    
-                console.log (`${increment} ${remaining}`);
-    
+
+                console.log(`${increment} ${remaining}`);
+
                 $('video')[0].volume = volume;
-                console.log (`Volume fade:   ${volume}`);
-    
+                console.log(`Volume fade:   ${volume}`);
+
                 volume -= (scale * increment / remaining);
                 remaining -= increment;
-    
+
                 await milliseconds(increment);
             }
 
@@ -221,7 +223,7 @@ const videoFadeHandler = (_ => {
         }
 
         $('video')[0].volume = volume;
-        console.log (`Volume update: ${volume}`);
+        console.log(`Volume update: ${volume}`);
     }
 
     function clearTimers() {
@@ -292,9 +294,7 @@ function hide({ typeList }) {
             // if video is faded out, fade out audio of player
             if (typeList.includes('video') && !videoFadeHandler.isClearing()) {
                 await videoFadeHandler.clear(transitionDuration);
-            }
-
-            else {
+            } else {
                 await milliseconds(transitionDuration);
             }
         }
@@ -368,16 +368,14 @@ function transitionToVideo({ videoPath }) {
 
         if (settings.get('video_loop')) {
             $('video').attr('loop', 'loop');
-        }
-        
-        else {
+        } else {
             $('video').removeAttr('loop');
         }
 
         $('video')[0].volume = 0.0;
 
         videoFadeHandler.reset();
-        
+
         $('.video-item').on('timeupdate', event => {
             let current = event.target.currentTime;
 
@@ -469,13 +467,11 @@ function showText(md) {
 }
 
 function loopVideo(loop) {
-    console.log (loop);
+    console.log(loop);
 
     if (loop) {
         $('video').attr('loop', 'loop');
-    }
-    
-    else {
+    } else {
         $('video').removeAttr('loop');
     }
 
@@ -549,6 +545,20 @@ async function init() {
     api.onClear(clear);
 
     api.sendMessage('getConfig');
+
+    $(document).on('click', '#fullscreen-enter', _ => {
+        $('#fullscreen-enter').hide();
+        $('#fullscreen-exit').show();
+        $('body').addClass('fullscreen');
+        api.sendMessage('fullscreen', true);
+    });
+
+    $(document).on('click', '#fullscreen-exit', _ => {
+        $('#fullscreen-enter').show();
+        $('#fullscreen-exit').hide();
+        $('body').removeClass('fullscreen');
+        api.sendMessage('fullscreen', false);
+    });
 }
 
 window.onload = _ => {

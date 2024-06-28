@@ -51,6 +51,25 @@ p {
     font-size: min(8vh, 8vw);
 }
 
+button {
+    padding: 8px;
+    color: white;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+button img {
+    filter: invert(1);
+}
+
+button p {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12pt;
+}
+
 #details {
     position: fixed;
     top: 0;
@@ -64,7 +83,8 @@ p {
     z-index: 1;
 }
 
-.image-item, .video-item {
+.image-item,
+.video-item {
     position: fixed;
     top: 0px;
     left: 0px;
@@ -107,16 +127,66 @@ img.animated.hidden {
     transition: opacity var(--text-out) linear;
 }
 
-video.animated {
+.video-item.animated {
     transition: opacity var(--video-in) linear;
 }
 
-video.animated.hidden {
+.video-item.animated.hidden {
     transition: opacity var(--video-out) linear;
 }
 
 .hidden {
     opacity: 0;
+}
+
+#drag {
+    position: fixed;
+    z-index: 9999;
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: var(--color-surface-300);
+    opacity: 1;
+    -webkit-app-region: drag;
+    cursor: grab;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+#drag img {
+    filter: invert(1);
+}
+
+#drag p {
+    font-family: Arial, Helvetica, sans-serif!important;
+    font-size: 12pt;
+}
+
+body.fullscreen #drag {
+    opacity: 0;
+}
+
+#controls {
+    position: fixed;
+    z-index: 9999;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 150ms ease-in-out;
+}
+
+body.fullscreen #controls {
+    opacity: 0;
+}
+
+body.fullscreen:hover #controls {
+    opacity: 1;
 }
 
 @font-face {

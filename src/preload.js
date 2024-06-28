@@ -46,4 +46,8 @@ contextBridge.exposeInMainWorld('api', {
     onClear: (callback) => {
         ipcRenderer.on("clear", (event, ...args) => callback(...args));
     },
+
+    onFullScreen: (callback) => {
+        ipcRenderer.on("fullscreen", (event, ...args) => callback(...args));
+    },
 });

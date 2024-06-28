@@ -24,9 +24,9 @@ const settings = (_ => {
             let id = key.replace("_", "-");
             let label = key.charAt(0).toUpperCase() + key.replace("_", " ").slice(1);
             let val = defaults[key];
-    
+
             api.sendMessage('settingsChanged', _public.values);
-    
+
             $("#fade-panel").append(`
                 <div class="slider-container">
                     <label class="settings-label" for="${id}">${label}</label>
@@ -109,7 +109,7 @@ const audio = (_ => {
         let audioTime = player.seek();
         let progress = 100 * audioTime / player.duration();
         audioTime = Math.floor(audioTime);
-    
+
         $('#audio-progress').html(`
             :root {
                 --audio-progress: ${progress}%;
@@ -118,13 +118,11 @@ const audio = (_ => {
         `);
 
         maxProgress = isNaN(progress) ? maxProgress : Math.max(progress, maxProgress);
-        console.log (`${progress} ${maxProgress}`);
+        console.log(`${progress} ${maxProgress}`);
 
-        if (isNaN(progress) || maxProgress == 0 || progress != 0 ) {
+        if (isNaN(progress) || maxProgress == 0 || progress != 0) {
             progressTimeoutId = requestAnimationFrame(updateProgress);
-        }
-
-        else {
+        } else {
             $('.sfx-button').removeClass('playing');
         }
     }
