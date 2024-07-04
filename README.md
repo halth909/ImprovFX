@@ -44,6 +44,7 @@ Once the application is up and running, you can start using it to control your s
 
 1. **Loading media:**
  * Add media to the indicated folders within src/_media.
+ * Only [web safe files](https://developer.mozilla.org/en-US/docs/Web/Media/Formats) are supported. You should be pretty safe with .jpg, .png, .mp3, and .mp4.
 2. **Video Control:**
  * Click on the "Video/Text" tab.
  * Click the video you want to play.
