@@ -132,6 +132,10 @@ button.header-tab.selected {
     min-height: 25px;
 }
 
+.clear span {
+    color: gray;
+}
+
 .panel-full {
     margin: 8px;
     overflow-y: scroll;
