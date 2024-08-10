@@ -126,6 +126,7 @@ button.header-tab.selected {
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 4px;
 }
 
 #header-clear__label {
@@ -133,7 +134,12 @@ button.header-tab.selected {
 }
 
 .clear {
-    width: 50px;
+    width: 70px;
+    min-height: 25px;
+}
+
+.clear span {
+    color: gray;
 }
 
 .panel-full {

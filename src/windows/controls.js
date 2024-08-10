@@ -382,21 +382,23 @@ async function init() {
         api.sendMessage('fontSelected', $(event.currentTarget).val());
     });
 
-    // $(document).on('keydown', event => {
-    //     const num = parseInt(event.key);
+    $(document).on('keydown', event => {
+        $(`button[data-key='${event.key.toLowerCase()}']`).click();
 
-    //     if (isNaN(num)) {
-    //         return;
-    //     }
+        // const num = parseInt(event.key);
 
-    //     if (num > $('.sfx-button').length) {
-    //         return;
-    //     }
+        // if (isNaN(num)) {
+        //     return;
+        // }
 
-    //     new Howl({
-    //         src: [$('.sfx-button').eq(num - 1).attr('data-url')]
-    //     }).play();
-    // });
+        // if (num > $('.sfx-button').length) {
+        //     return;
+        // }
+
+        // new Howl({
+        //     src: [$('.sfx-button').eq(num - 1).attr('data-url')]
+        // }).play();
+    });
 
     $(document).on('keyup', 'input, textarea', _ => {
         details.update();

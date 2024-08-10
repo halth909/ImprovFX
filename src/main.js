@@ -7,9 +7,10 @@ function isDev() {
 }
 
 const windowDefaults = {
-    width: 820,
-    minWidth: 820,
+    width: 960,
+    minWidth: 960,
     height: 600,
+    minHeight: 600,
     y: 0,
     webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
