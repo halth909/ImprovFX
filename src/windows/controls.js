@@ -76,7 +76,7 @@ const audio = (_ => {
     }
 
     _public.cancel = _ => {
-        console.log(player);
+        // console.log(player);
         if (!player) {
             return;
         }
@@ -118,7 +118,7 @@ const audio = (_ => {
         `);
 
         maxProgress = isNaN(progress) ? maxProgress : Math.max(progress, maxProgress);
-        console.log(`${progress} ${maxProgress}`);
+        // console.log(`${progress} ${maxProgress}`);
 
         if (isNaN(progress) || maxProgress == 0 || progress != 0) {
             progressTimeoutId = requestAnimationFrame(updateProgress);
@@ -141,7 +141,7 @@ const details = (_ => {
         };
 
         $('input, textarea').each((index, element) => {
-            console.log(index, element, $(element).val());
+            // console.log(index, element, $(element).val());
             result["current"][$(element).attr('id')] = $(element).val();
         });
 
@@ -155,13 +155,13 @@ const details = (_ => {
     }
 
     _public.add = ({ key, index } = {}) => {
-        console.log(key, index);
+        // console.log(key, index);
         let value = "";
 
         if (typeof key === 'undefined') {
             key = `custom-${index}`;
 
-            console.log(customHistory);
+            // console.log(customHistory);
 
             if (customHistory.length > 0) {
                 value = customHistory.pop();
@@ -212,7 +212,7 @@ const mediaButtons = (_ => {
     _public.setup = files => {
         for (let i = 0; i < files.videos.length; i++) {
             const video = files.videos[i];
-            console.log(video);
+            // console.log(video);
 
             let $element = $($.parseHTML(`
                 <div class="video-button media-button" data-url="${video.url}">
@@ -282,7 +282,7 @@ const mediaButtons = (_ => {
     _public.search = terms => {
         terms = terms.toLowerCase().trim();
         for (let i = 0; i < buttons.length; i++) {
-            console.log(buttons[i].$element);
+            // console.log(buttons[i].$element);
 
             if (terms == "" || buttons[i].searchTags.includes(terms)) {
                 buttons[i].$element.removeClass("hidden");
@@ -311,7 +311,7 @@ async function init() {
 
     $(document).on('click', '.clear', event => {
         const type = $(event.target).attr('data-type');
-        console.log(`clearing ${type}`);
+        // console.log(`clearing ${type}`);
 
         switch (type) {
             case "all":
@@ -357,7 +357,7 @@ async function init() {
     });
 
     $(document).on('click', '.image-button', event => {
-        console.log('image clicked');
+        // console.log('image clicked');
         api.sendMessage('imageClicked', $(event.currentTarget).attr('data-url'));
     });
 
@@ -369,12 +369,12 @@ async function init() {
     });
 
     $(document).on('input', '#video-loop', event => {
-        console.log(event);
+        // console.log(event);
         api.sendMessage('videoLoop', event.currentTarget.checked);
     });
 
     $(document).on('input', '#video-mute', event => {
-        console.log(event);
+        // console.log(event);
         api.sendMessage('videoMute', event.currentTarget.checked);
     });
 
@@ -414,7 +414,7 @@ async function init() {
     });
 
     api.onLoadPreviousText((previousText) => {
-        console.log(previousText);
+        // console.log(previousText);
 
         previousText = JSON.parse(previousText);
 

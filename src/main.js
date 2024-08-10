@@ -26,12 +26,12 @@ if (process.platform === 'win32') {
 app.whenReady().then(_ => {
     ipcMain.on('settingsChanged', (event, details) => {
         showWindowManager.send('updateSettings', details);
-        console.log(details);
+        // console.log(details);
     });
 
     ipcMain.on('detailsUpdated', (event, details) => {
         showWindowManager.send('updateDetails', details);
-        console.log(details);
+        // console.log(details);
         fs.writeFileSync(path.join(__dirname, 'details.json'), details);
     });
 
@@ -84,7 +84,7 @@ app.whenReady().then(_ => {
                 encoding: 'utf8'
             });
         } catch (err) {
-            console.log(err);
+            // console.log(err);
         }
 
         controlsWindow.webContents.send('loadPreviousText', details);
@@ -181,7 +181,7 @@ const showWindowManager = (() => {
     };
 
     let close = _ => {
-        console.log("closing!");
+        // console.log("closing!");
         showWindow.close();
     };
 

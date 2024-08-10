@@ -86,7 +86,7 @@ const types = (_ => {
         let queryParts = [];
 
         for (let item of list) {
-            console.log(item);
+            // console.log(item);
             if (item in map) {
                 queryParts.push(map[item]);
             }
@@ -140,7 +140,7 @@ const videoFadeHandler = (_ => {
     let _public = {};
 
     _public.reset = _ => {
-        console.log("RESETTING");
+        // console.log("RESETTING");
 
         time = 0.0;
         maxTime = -1;
@@ -167,7 +167,7 @@ const videoFadeHandler = (_ => {
     }
 
     _public.clear = async(duration) => {
-        console.log("CLEARING");
+        // console.log("CLEARING");
 
         clearing = true;
         clearTimers();
@@ -180,10 +180,10 @@ const videoFadeHandler = (_ => {
                     break;
                 }
 
-                console.log(`${increment} ${remaining}`);
+                // console.log(`${increment} ${remaining}`);
 
                 $('video')[0].volume = settings.get('video_mute') ? 0 : volume;
-                console.log(`Volume fade:   ${volume}`);
+                // console.log(`Volume fade:   ${volume}`);
 
                 volume -= (scale * increment / remaining);
                 remaining -= increment;
@@ -265,7 +265,7 @@ let actionHandlerFactory = {
         let _public = {};
 
         _public.addAction = (actionData) => {
-            console.log(actionData);
+            // console.log(actionData);
 
             actionBuffer = actionData;
             tryProcessAction()
@@ -435,7 +435,7 @@ function updateSettings(payload) {
 }
 
 function showImage(imagePath) {
-    console.log('showing image');
+    // console.log('showing image');
 
     backgroundActionHandler.addAction({
         action: transitionToImage,
@@ -444,7 +444,7 @@ function showImage(imagePath) {
 };
 
 function playVideo(videoPath) {
-    console.log('playing video');
+    // console.log('playing video');
 
     backgroundActionHandler.addAction({
         action: transitionToVideo,
@@ -455,11 +455,11 @@ function playVideo(videoPath) {
 }
 
 function showText(md) {
-    console.log('showing text');
+    // console.log('showing text');
 
     let converter = new showdown.Converter();
     let html = converter.makeHtml(md);
-    console.log(html);
+    // console.log(html);
     foregroundActionHandler.addAction({
         action: transitionToText,
         options: { html }
@@ -467,7 +467,7 @@ function showText(md) {
 }
 
 function loopVideo(loop) {
-    console.log(loop);
+    // console.log(loop);
 
     if (loop) {
         $('video').attr('loop', 'loop');
@@ -479,7 +479,7 @@ function loopVideo(loop) {
 }
 
 function muteVideo(mute) {
-    console.log(mute);
+    // console.log(mute);
     settings.set({ 'video_mute': mute });
 }
 
@@ -524,7 +524,7 @@ function scaleText(scale) {
 }
 
 function clear(type) {
-    console.log(`clearing ${type}`);
+    // console.log(`clearing ${type}`);
 
     if (type == 'video') {
         playVideo(null);
