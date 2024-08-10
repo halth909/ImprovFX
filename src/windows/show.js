@@ -21,7 +21,8 @@ const animationFrame = _ => {
 const settings = (_ => {
     let values = {
         default_fade: 1000, // milliseconds
-        video_loop: false
+        video_loop: false,
+        video_mute: false,
     };
 
     let _public = {};
@@ -181,7 +182,7 @@ const videoFadeHandler = (_ => {
 
                 console.log(`${increment} ${remaining}`);
 
-                $('video')[0].volume = volume;
+                $('video')[0].volume = settings.get('video_mute') ? 0 : volume;
                 console.log(`Volume fade:   ${volume}`);
 
                 volume -= (scale * increment / remaining);
@@ -222,8 +223,7 @@ const videoFadeHandler = (_ => {
             }
         }
 
-        $('video')[0].volume = volume;
-        console.log(`Volume update: ${volume}`);
+        $('video')[0].volume = settings.get('video_mute') ? 0 : volume;
     }
 
     function clearTimers() {
@@ -478,6 +478,11 @@ function loopVideo(loop) {
     settings.set({ 'video_loop': loop });
 }
 
+function muteVideo(mute) {
+    console.log(mute);
+    settings.set({ 'video_mute': mute });
+}
+
 function useFont(fontPath) {
     if ($('#custom-font').length == 0) {
         $("head").append(`
@@ -540,6 +545,7 @@ async function init() {
     api.onPlayVideo(playVideo);
     api.onShowText(showText);
     api.onLoopVideo(loopVideo);
+    api.onMuteVideo(muteVideo);
     api.onUseFont(useFont);
     api.onScaleText(scaleText);
     api.onClear(clear);

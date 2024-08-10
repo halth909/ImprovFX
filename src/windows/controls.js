@@ -373,6 +373,11 @@ async function init() {
         api.sendMessage('videoLoop', event.currentTarget.checked);
     });
 
+    $(document).on('input', '#video-mute', event => {
+        console.log(event);
+        api.sendMessage('videoMute', event.currentTarget.checked);
+    });
+
     $(document).on('input', '#font-select', event => {
         api.sendMessage('fontSelected', $(event.currentTarget).val());
     });

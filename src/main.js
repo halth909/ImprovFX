@@ -50,6 +50,10 @@ app.whenReady().then(_ => {
         showWindowManager.send('loopVideo', loop);
     });
 
+    ipcMain.on('videoMute', (event, mute) => {
+        showWindowManager.send('muteVideo', mute);
+    });
+
     ipcMain.on('fontSelected', (event, fontPath) => {
         showWindowManager.send('useFont', fontPath);
     });

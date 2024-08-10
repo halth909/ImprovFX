@@ -34,6 +34,10 @@ contextBridge.exposeInMainWorld('api', {
         ipcRenderer.on("loopVideo", (event, ...args) => callback(...args));
     },
 
+    onMuteVideo: (callback) => {
+        ipcRenderer.on("muteVideo", (event, ...args) => callback(...args));
+    },
+
     onUseFont: (callback) => {
         ipcRenderer.on("useFont", (event, ...args) => callback(...args));
     },

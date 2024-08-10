@@ -91,6 +91,12 @@ h2 {
     padding-top: 8px;
 }
 
+.button-group-h {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+
 button.header-tab {
     flex: 1 0 100px;
     height: 24px;
