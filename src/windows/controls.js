@@ -301,6 +301,8 @@ function hidePanels() {
 }
 
 async function init() {
+    let hotkeysActive = true;
+
     $(document).on('click', '.header-tab', event => {
         hidePanels();
 
@@ -382,22 +384,18 @@ async function init() {
         api.sendMessage('fontSelected', $(event.currentTarget).val());
     });
 
+    // media clear hotkeys
+    $(document).on('focus', 'input, textarea', _ => {
+        hotkeysActive = false;
+    });
+
+    $(document).on('blur', 'input, textarea', _ => {
+        hotkeysActive = true;
+    });
+
     $(document).on('keydown', event => {
+        if (!hotkeysActive) return;
         $(`button[data-key='${event.key.toLowerCase()}']`).click();
-
-        // const num = parseInt(event.key);
-
-        // if (isNaN(num)) {
-        //     return;
-        // }
-
-        // if (num > $('.sfx-button').length) {
-        //     return;
-        // }
-
-        // new Howl({
-        //     src: [$('.sfx-button').eq(num - 1).attr('data-url')]
-        // }).play();
     });
 
     $(document).on('keyup', 'input, textarea', _ => {
