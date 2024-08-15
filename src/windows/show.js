@@ -116,8 +116,12 @@ const types = (_ => {
 
         let max = 0;
 
-        for (let item of list) {
-            max = Math.max(max, settings.get(`${item}_${suffix}`));
+        for (let item of list) {  
+            if ($(`.${item}-item`).length > 0) {
+                max = Math.max(max, settings.get(`${item}_${suffix}`));
+            }
+
+            console.log(`${$(`.${item}-item`).length} ${max}`)
         }
 
         return max;
